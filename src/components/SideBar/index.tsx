@@ -327,7 +327,7 @@ export const SideBar = (props: SideBarProps) => {
               <Typography>truncation</Typography>
             </Box>
             <Box>
-              <Tooltip title="Adicionar imagem">
+              <Tooltip title="Add image to workspace">
                 <IconButton sx={{ color: "#ffffff" }}>
                   <input
                     type="file"
@@ -349,7 +349,7 @@ export const SideBar = (props: SideBarProps) => {
                   <AddPhotoAlternateIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Limpar">
+              <Tooltip title="Clear workspace">
                 <IconButton
                   sx={{ color: "#ffffff" }}
                   onClick={props.handleClearPlaygroundClick}
