@@ -161,8 +161,8 @@ const RGBToHSB = (
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     const image = ctx.createImageData(width, height);
-    imageData.data.set(channel);
-    ctx.putImageData(imageData, 0, 0);
+    image.data.set(channel);
+    ctx.putImageData(image, 0, 0);
     return canvas;
   };
 
@@ -178,57 +178,55 @@ const RGBToYUV = (
   width: number,
   height: number
 ): HTMLCanvasElement[] => {
-  const yuvChannels = {
-    y: new Uint8ClampedArray(image.length),
-    u: new Uint8ClampedArray(image.length),
-    v: new Uint8ClampedArray(image.length),
-  };
+  const yCanvas = document.createElement("canvas");
+  const uCanvas = document.createElement("canvas");
+  const vCanvas = document.createElement("canvas");
 
-  const rgbToYuv = (r: number, g: number, b: number) => {
-    const y = 0.299 * r + 0.587 * g + 0.114 * b;
-    const u = 0.492 * (b - y);
-    const v = 0.877 * (r - y);
+  yCanvas.width = uCanvas.width = vCanvas.width = width;
+  yCanvas.height = uCanvas.height = vCanvas.height = height;
 
-    return {
-      y,
-      u: u + 128, // Shift to the range [0, 255]
-      v: v + 128, // Shift to the range [0, 255]
-    };
-  };
+  const yContext = yCanvas.getContext("2d");
+  const uContext = uCanvas.getContext("2d");
+  const vContext = vCanvas.getContext("2d");
+
+  if (!yContext || !uContext || !vContext) {
+    throw new Error("Canvas context not supported");
+  }
+
+  const yImageData = yContext.createImageData(width, height);
+  const uImageData = uContext.createImageData(width, height);
+  const vImageData = vContext.createImageData(width, height);
 
   for (let i = 0; i < image.length; i += 4) {
     const r = image[i];
     const g = image[i + 1];
     const b = image[i + 2];
 
-    const { y, u, v } = rgbToYuv(r, g, b);
+    const y = 0.299 * r + 0.587 * g + 0.114 * b;
+    const u = -0.14713 * r - 0.28886 * g + 0.436 * b + 128;
+    const v = 0.615 * r - 0.51498 * g - 0.10001 * b + 128;
 
-    yuvChannels.y[i] = y;
-    yuvChannels.y[i + 3] = 255;
+    yImageData.data[i] = y;
+    yImageData.data[i + 1] = y;
+    yImageData.data[i + 2] = y;
+    yImageData.data[i + 3] = 255;
 
-    yuvChannels.u[i] = u;
-    yuvChannels.u[i + 3] = 255;
+    uImageData.data[i] = u;
+    uImageData.data[i + 1] = u;
+    uImageData.data[i + 2] = u;
+    uImageData.data[i + 3] = 255;
 
-    yuvChannels.v[i] = v;
-    yuvChannels.v[i + 3] = 255;
+    vImageData.data[i] = v;
+    vImageData.data[i + 1] = v;
+    vImageData.data[i + 2] = v;
+    vImageData.data[i + 3] = 255;
   }
 
-  const createCanvasFromChannel = (channel: Uint8ClampedArray) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.createImageData(width, height);
-    imageData.data.set(channel);
-    ctx.putImageData(imageData, 0, 0);
-    return canvas;
-  };
+  yContext.putImageData(yImageData, 0, 0);
+  uContext.putImageData(uImageData, 0, 0);
+  vContext.putImageData(vImageData, 0, 0);
 
-  return [
-    createCanvasFromChannel(yuvChannels.y),
-    createCanvasFromChannel(yuvChannels.u),
-    createCanvasFromChannel(yuvChannels.v),
-  ];
+  return [yCanvas, uCanvas, vCanvas];
 };
 
 const RGBToCMYK = (
@@ -238,51 +236,67 @@ const RGBToCMYK = (
 ): HTMLCanvasElement[] => {
   const canvasArray: HTMLCanvasElement[] = [];
 
-    // Create canvas elements for each channel
-    const cyanCanvas = document.createElement('canvas');
-    const magentaCanvas = document.createElement('canvas');
-    const yellowCanvas = document.createElement('canvas');
-    const keyCanvas = document.createElement('canvas');
+  // Create canvas elements for each channel
+  const cyanCanvas = document.createElement("canvas");
+  const magentaCanvas = document.createElement("canvas");
+  const yellowCanvas = document.createElement("canvas");
+  const keyCanvas = document.createElement("canvas");
 
-    // Set canvas dimensions
-    cyanCanvas.width = magentaCanvas.width = yellowCanvas.width = keyCanvas.width = width;
-    cyanCanvas.height = magentaCanvas.height = yellowCanvas.height = keyCanvas.height = height;
+  // Set canvas dimensions
+  cyanCanvas.width =
+    magentaCanvas.width =
+    yellowCanvas.width =
+    keyCanvas.width =
+      width;
+  cyanCanvas.height =
+    magentaCanvas.height =
+    yellowCanvas.height =
+    keyCanvas.height =
+      height;
 
-    // Get canvas contexts
-    const cyanContext = cyanCanvas.getContext('2d')!;
-    const magentaContext = magentaCanvas.getContext('2d')!;
-    const yellowContext = yellowCanvas.getContext('2d')!;
-    const keyContext = keyCanvas.getContext('2d')!;
+  // Get canvas contexts
+  const cyanContext = cyanCanvas.getContext("2d")!;
+  const magentaContext = magentaCanvas.getContext("2d")!;
+  const yellowContext = yellowCanvas.getContext("2d")!;
+  const keyContext = keyCanvas.getContext("2d")!;
 
-    // Initialize image data arrays for each channel
-    const cyanImageData = new Uint8ClampedArray(width * height * 4);
-    const magentaImageData = new Uint8ClampedArray(width * height * 4);
-    const yellowImageData = new Uint8ClampedArray(width * height * 4);
-    const keyImageData = new Uint8ClampedArray(width * height * 4);
+  // Initialize image data arrays for each channel
+  const cyanImageData = new Uint8ClampedArray(width * height * 4);
+  const magentaImageData = new Uint8ClampedArray(width * height * 4);
+  const yellowImageData = new Uint8ClampedArray(width * height * 4);
+  const keyImageData = new Uint8ClampedArray(width * height * 4);
 
-    // Iterate through each pixel in the original image
-    for (let i = 0; i < image.length; i += 4) {
-        const red = image[i];
-        const green = image[i + 1];
-        const blue = image[i + 2];
+  // Iterate through each pixel in the original image
+  for (let i = 0; i < image.length; i += 4) {
+    const red = image[i];
+    const green = image[i + 1];
+    const blue = image[i + 2];
 
-        const maxRGB = Math.max(red, green, blue);
-        const key = 255 - maxRGB;
+    const maxRGB = Math.max(red, green, blue);
+    const key = 255 - maxRGB;
 
-        cyanImageData.set([0, green, blue, 255], i);
-        magentaImageData.set([red, 0, blue, 255], i);
-        yellowImageData.set([red, green, 0, 255], i);
-        keyImageData.set([key, key, key, 255], i);
-    }
+    cyanImageData.set([0, green, blue, 255], i);
+    magentaImageData.set([red, 0, blue, 255], i);
+    yellowImageData.set([red, green, 0, 255], i);
+    keyImageData.set([key, key, key, 255], i);
+  }
 
-    // Put image data onto canvas contexts
-    cyanContext.putImageData(new ImageData(cyanImageData, width, height), 0, 0);
-    magentaContext.putImageData(new ImageData(magentaImageData, width, height), 0, 0);
-    yellowContext.putImageData(new ImageData(yellowImageData, width, height), 0, 0);
-    keyContext.putImageData(new ImageData(keyImageData, width, height), 0, 0);
+  // Put image data onto canvas contexts
+  cyanContext.putImageData(new ImageData(cyanImageData, width, height), 0, 0);
+  magentaContext.putImageData(
+    new ImageData(magentaImageData, width, height),
+    0,
+    0
+  );
+  yellowContext.putImageData(
+    new ImageData(yellowImageData, width, height),
+    0,
+    0
+  );
+  keyContext.putImageData(new ImageData(keyImageData, width, height), 0, 0);
 
-    // Push canvas elements to the result array
-    canvasArray.push(cyanCanvas, magentaCanvas, yellowCanvas, keyCanvas);
+  // Push canvas elements to the result array
+  canvasArray.push(cyanCanvas, magentaCanvas, yellowCanvas, keyCanvas);
 
-    return canvasArray;
+  return canvasArray;
 };

@@ -5,11 +5,6 @@
 4a Implementação:
 - Decomposição de imagens coloridas emplanos monocromáticos passíveis de recomposição. Mostrar a imagem referente a cada componente do espaço de cor. Exemplo para RGB: Mostrar as imagens referentes ao Red, Green e Blue.
 
-5a Implementação:
-- Implementar técnica de pseudocolorização para:
-  - Imagens em tons de cinza
-  - Imagens coloridas
-
 OBS GERAL: Poder escolher a ordem dos operandos em operações que possuam mais de um (Tanto imagem quanto escalar). Talvez deixar assim para as operações lógicas também, para poder trabalhar de forma genérica.
 OBS GERAL 2: Poder escolher se os valores serão normalizados ou truncados nas operações.
 OBS GERAL 3: Tratar imagens de tamanhos diferentes (Provavelmente centralizando a menor).

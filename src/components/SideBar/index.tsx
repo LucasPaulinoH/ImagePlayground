@@ -23,6 +23,7 @@ import {
   ArithmeticOperation,
   ColorChannel,
   LogicOperation,
+  PseudocoloringOperation,
   RgbConversion,
   ZoomOperation,
 } from "../../types";
@@ -37,6 +38,8 @@ import {
   rgbConvertion,
 } from "../../utils/Operations/ColorChannels";
 import { zoomOperation } from "../../utils/Operations/Zoom";
+import { pseudocoloringOperation } from "../../utils/Operations/Pseudocoloring";
+import InvertColorsIcon from '@mui/icons-material/InvertColors';
 
 const drawerWidth = 240;
 
@@ -64,6 +67,7 @@ export const SideBar = (props: SideBarProps) => {
   const [logicOpen, setLogicOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [colorChannelsOpen, setColorChannelsOpen] = useState(false);
+  const [pseudocoloring, setPseudocoloring] = useState(false);
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -117,6 +121,18 @@ export const SideBar = (props: SideBarProps) => {
         props.selectedImages[0],
         operationType,
         zoomFactor
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executePseudocoloringOperation = (
+    operationType: PseudocoloringOperation
+  ) => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = pseudocoloringOperation(
+        props.selectedImages[0],
+        operationType
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -295,6 +311,40 @@ export const SideBar = (props: SideBarProps) => {
               onClick={() => executeRgbConversionOperation(RgbConversion.CMYK)}
             >
               <ListItemText primary="Convert to CMYK" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setPseudocoloring(!pseudocoloring)}>
+          <ListItemIcon>
+            <InvertColorsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Pseudocoloring" />
+          {pseudocoloring ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={pseudocoloring} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() =>
+                executePseudocoloringOperation(
+                  PseudocoloringOperation.DENSITY_SLICING
+                )
+              }
+            >
+              <ListItemText primary="Density slicing" />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() =>
+                executePseudocoloringOperation(
+                  PseudocoloringOperation.REDISTRIBUTION
+                )
+              }
+            >
+              <ListItemText primary="Color redistribution" />
             </ListItemButton>
           </List>
         </Collapse>

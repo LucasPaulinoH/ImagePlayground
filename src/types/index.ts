@@ -29,3 +29,8 @@ export enum RgbConversion {
   YUV,
   CMYK,
 }
+
+export enum PseudocoloringOperation{
+  DENSITY_SLICING,
+  REDISTRIBUTION
+}
