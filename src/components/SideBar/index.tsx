@@ -39,7 +39,8 @@ import {
 } from "../../utils/Operations/ColorChannels";
 import { zoomOperation } from "../../utils/Operations/Zoom";
 import { pseudocoloringOperation } from "../../utils/Operations/Pseudocoloring";
-import InvertColorsIcon from '@mui/icons-material/InvertColors';
+import InvertColorsIcon from "@mui/icons-material/InvertColors";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 const drawerWidth = 240;
 
@@ -68,6 +69,7 @@ export const SideBar = (props: SideBarProps) => {
   const [zoomOpen, setZoomOpen] = useState(false);
   const [colorChannelsOpen, setColorChannelsOpen] = useState(false);
   const [pseudocoloring, setPseudocoloring] = useState(false);
+  const [enhancements, setEnhancements] = useState(false);
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -345,6 +347,47 @@ export const SideBar = (props: SideBarProps) => {
               }
             >
               <ListItemText primary="Color redistribution" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setEnhancements(!enhancements)}>
+          <ListItemIcon>
+            <AutoAwesomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Enhancements" />
+          {enhancements ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={enhancements} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding sx={{ pt: 1 }}>
+            <Typography sx={{ pl: 4 }} fontWeight="bold">
+              - Linear:
+            </Typography>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="interval" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="binary" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="reverse" />
+            </ListItemButton>
+            <Typography sx={{ pl: 4 }} fontWeight="bold">
+              - Non-linear:
+            </Typography>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="log" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="square root" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="exponential" />
+            </ListItemButton>
+            <ListItemButton sx={{ pl: 6 }}>
+              <ListItemText primary="squared" />
             </ListItemButton>
           </List>
         </Collapse>

@@ -30,7 +30,17 @@ export enum RgbConversion {
   CMYK,
 }
 
-export enum PseudocoloringOperation{
+export enum PseudocoloringOperation {
   DENSITY_SLICING,
-  REDISTRIBUTION
+  REDISTRIBUTION,
+}
+
+export enum EnhancementOperation {
+  INTERVAL,
+  BINARY,
+  REVERSE,
+  LOG,
+  SQUARE_ROOT,
+  EXPONENTIAL,
+  SQUARED,
 }
