@@ -33,7 +33,7 @@ import Switch from "@mui/material/Switch";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import {
-  colorChannelOperation,
+  rgbColorChannelOperation,
   rgbConvertion,
 } from "../../utils/Operations/ColorChannels";
 import { zoomOperation } from "../../utils/Operations/Zoom";
@@ -89,7 +89,7 @@ export const SideBar = (props: SideBarProps) => {
 
   const executeColorChannelOperation = (operationType: ColorChannel) => {
     if (props.images.length > 0) {
-      const operationResult: HTMLCanvasElement = colorChannelOperation(
+      const operationResult: HTMLCanvasElement = rgbColorChannelOperation(
         props.selectedImages[0],
         operationType
       );
