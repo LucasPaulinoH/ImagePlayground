@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Toolbar,
@@ -14,6 +13,11 @@ import {
   Drawer,
   Collapse,
   Tooltip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Button,
 } from "@mui/material";
 import { useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -25,6 +29,7 @@ import {
   LogicOperation,
   PseudocoloringOperation,
   RgbConversion,
+  TransformationOperation,
   ZoomOperation,
 } from "../../types";
 import { logicOperation } from "../../utils/Operations/Logic";
@@ -33,6 +38,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Switch from "@mui/material/Switch";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
+import TransformIcon from "@mui/icons-material/Transform";
 import {
   rgbColorChannelOperation,
   rgbConvertion,
@@ -41,6 +47,7 @@ import { zoomOperation } from "../../utils/Operations/Zoom";
 import { pseudocoloringOperation } from "../../utils/Operations/Pseudocoloring";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { transformationOperation } from "../../utils/Operations/Transformations";
 
 const drawerWidth = 240;
 
@@ -66,10 +73,14 @@ export const SideBar = (props: SideBarProps) => {
 
   const [arithmeticOpen, setArithmeticOpen] = useState(false);
   const [logicOpen, setLogicOpen] = useState(false);
+  const [transformationOpen, setTransformationOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [colorChannelsOpen, setColorChannelsOpen] = useState(false);
   const [pseudocoloring, setPseudocoloring] = useState(false);
   const [enhancements, setEnhancements] = useState(false);
+
+  const [transformationSelected, setTranformationSelected] =
+    useState<TransformationOperation>(TransformationOperation.ROTATION);
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -88,6 +99,16 @@ export const SideBar = (props: SideBarProps) => {
         props.selectedImages[0],
         props.selectedImages[1],
         operationType
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeTransformationOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = transformationOperation(
+        props.selectedImages[0],
+        transformationSelected
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -224,6 +245,73 @@ export const SideBar = (props: SideBarProps) => {
             >
               <ListItemText primary="XOR (^)" />
             </ListItemButton>
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => setTransformationOpen(!transformationOpen)}
+        >
+          <ListItemIcon>
+            <TransformIcon />
+          </ListItemIcon>
+          <ListItemText primary="Transformation" />
+          {transformationOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={transformationOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <Box
+              sx={{
+                minWidth: 120,
+                padding: "10px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
+              <FormControl fullWidth>
+                <Select
+                  value={transformationSelected}
+                  onChange={(e) => setTranformationSelected(e.target.value)}
+                  size="small"
+                >
+                  <MenuItem value={TransformationOperation.ROTATION}>
+                    Rotation
+                  </MenuItem>
+                  <MenuItem value={TransformationOperation.TRANSLATION}>
+                    Translation
+                  </MenuItem>
+                  <MenuItem value={TransformationOperation.SCALE}>
+                    Scale
+                  </MenuItem>
+                  <MenuItem
+                    value={TransformationOperation.HORIZONTAL_REFLECTION}
+                  >
+                    Horizontal reflection
+                  </MenuItem>
+                  <MenuItem value={TransformationOperation.VERTICAL_REFLECTION}>
+                    Vertical reflection
+                  </MenuItem>
+                  <MenuItem
+                    value={TransformationOperation.X_SHEAR}
+                  >
+                    X shear
+                  </MenuItem>
+                  <MenuItem value={TransformationOperation.Y_SHEAR}>
+                    Y shear
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{ textTransform: "none" }}
+                onClick={executeTransformationOperation}
+              >
+                Apply operation
+              </Button>
+            </Box>
           </List>
         </Collapse>
       </List>

@@ -11,6 +11,16 @@ export enum LogicOperation {
   XOR,
 }
 
+export enum TransformationOperation {
+  ROTATION,
+  TRANSLATION,
+  SCALE,
+  HORIZONTAL_REFLECTION,
+  VERTICAL_REFLECTION,
+  X_SHEAR,
+  Y_SHEAR,
+}
+
 export enum ZoomOperation {
   REPLICATION,
   INTERPOLATION,
