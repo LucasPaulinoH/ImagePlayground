@@ -84,6 +84,10 @@ export const SideBar = (props: SideBarProps) => {
     useState<TransformationOperation>(TransformationOperation.ROTATION);
 
   const [rotationFactor, setRotationFactor] = useState<number>(0);
+  const [xTranslationFactor, setXTranslationFactor] = useState<number>(0);
+  const [yTranslationFactor, setYTranslationFactor] = useState<number>(0);
+  const [xScaleFactor, setXScaleFactor] = useState<number>(0);
+  const [yScaleFactor, setYScaleFactor] = useState<number>(0);
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -112,7 +116,11 @@ export const SideBar = (props: SideBarProps) => {
       const operationResult: HTMLCanvasElement = transformationOperation(
         props.selectedImages[0],
         transformationSelected,
-        rotationFactor
+        rotationFactor,
+        xTranslationFactor,
+        yTranslationFactor,
+        xScaleFactor,
+        yScaleFactor
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -179,15 +187,39 @@ export const SideBar = (props: SideBarProps) => {
 
   const renderTranslationInputs = (
     <>
-      <TextField size="small" label="X distance" type="number" />
-      <TextField size="small" label="Y distance" type="number" />
+      <TextField
+        size="small"
+        label="X distance"
+        type="number"
+        value={xTranslationFactor}
+        onChange={(e) => setXTranslationFactor(e.target.value)}
+      />
+      <TextField
+        size="small"
+        label="Y distance"
+        type="number"
+        value={yTranslationFactor}
+        onChange={(e) => setYTranslationFactor(e.target.value)}
+      />
     </>
   );
 
   const renderScaleInputs = (
     <>
-      <TextField size="small" label="X scale" type="number" />
-      <TextField size="small" label="Y scale" type="number" />
+      <TextField
+        size="small"
+        label="X scale"
+        type="number"
+        value={xScaleFactor}
+        onChange={(e) => setXScaleFactor(e.target.value)}
+      />
+      <TextField
+        size="small"
+        label="Y scale"
+        type="number"
+        value={yScaleFactor}
+        onChange={(e) => setYScaleFactor(e.target.value)}
+      />
     </>
   );
 

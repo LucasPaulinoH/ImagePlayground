@@ -3,7 +3,11 @@ import { TransformationOperation } from "../../types";
 export const transformationOperation = (
   image: HTMLCanvasElement,
   transformationType: TransformationOperation,
-  rotationFactor?: number
+  rotationFactor?: number,
+  xTranslationFactor?: number,
+  yTranslationFactor?: number,
+  xScaleFactor?: number,
+  yScaleFactor?: number
 ) => {
   let resultingImageCanva: HTMLCanvasElement | null = null;
 
@@ -12,8 +16,18 @@ export const transformationOperation = (
       resultingImageCanva = rotation(image, rotationFactor ?? 0);
       break;
     case TransformationOperation.TRANSLATION:
+      resultingImageCanva = translation(
+        image,
+        xTranslationFactor ?? 0,
+        yTranslationFactor ?? 0
+      );
       break;
     case TransformationOperation.SCALE:
+      resultingImageCanva = scale(
+        image,
+        xScaleFactor ?? 0,
+        yScaleFactor ?? 0
+      );
       break;
     case TransformationOperation.HORIZONTAL_REFLECTION:
       resultingImageCanva = reflection(
@@ -66,6 +80,52 @@ const rotation = (
   rotatedContext.setTransform(1, 0, 0, 1, 0, 0);
 
   return rotatedCanvas;
+};
+
+const translation = (
+  image: HTMLCanvasElement,
+  xDistance: number,
+  yDistance: number
+): HTMLCanvasElement => {
+  const translatedCanvas = document.createElement("canvas");
+  const translatedContext = translatedCanvas.getContext("2d");
+
+  // Set the canvas dimensions based on the original image size
+  translatedCanvas.width = image.width;
+  translatedCanvas.height = image.height;
+
+  // Translate the context by the specified distances
+  translatedContext.translate(xDistance, yDistance);
+
+  // Draw the original image onto the translated canvas
+  translatedContext.drawImage(image, 0, 0);
+
+  // Reset transformations
+  translatedContext.setTransform(1, 0, 0, 1, 0, 0);
+
+  // Return the translated canvas
+  return translatedCanvas;
+};
+
+const scale = (
+  image: HTMLCanvasElement,
+  xScale: number,
+  yScale: number
+): HTMLCanvasElement => {
+  const scaledCanvas = document.createElement("canvas");
+  const scaledContext = scaledCanvas.getContext("2d");
+
+  const scaledWidth = image.width * xScale;
+  const scaledHeight = image.height * yScale;
+
+  scaledCanvas.width = scaledWidth;
+  scaledCanvas.height = scaledHeight;
+
+  scaledContext.clearRect(0, 0, scaledCanvas.width, scaledCanvas.height);
+
+  scaledContext.drawImage(image, 0, 0, scaledWidth, scaledHeight);
+
+  return scaledCanvas;
 };
 
 const reflection = (
