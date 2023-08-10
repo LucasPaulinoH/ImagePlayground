@@ -86,8 +86,10 @@ export const SideBar = (props: SideBarProps) => {
   const [rotationFactor, setRotationFactor] = useState<number>(0);
   const [xTranslationFactor, setXTranslationFactor] = useState<number>(0);
   const [yTranslationFactor, setYTranslationFactor] = useState<number>(0);
-  const [xScaleFactor, setXScaleFactor] = useState<number>(0);
-  const [yScaleFactor, setYScaleFactor] = useState<number>(0);
+  const [xScaleFactor, setXScaleFactor] = useState<number>(1);
+  const [yScaleFactor, setYScaleFactor] = useState<number>(1);
+  const [xShearFactor, setXShearFactor] = useState<number>(0);
+  const [yShearFactor, setYShearFactor] = useState<number>(0);
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -120,7 +122,9 @@ export const SideBar = (props: SideBarProps) => {
         xTranslationFactor,
         yTranslationFactor,
         xScaleFactor,
-        yScaleFactor
+        yScaleFactor,
+        xShearFactor,
+        yShearFactor,
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -211,27 +215,32 @@ export const SideBar = (props: SideBarProps) => {
         label="X scale"
         type="number"
         value={xScaleFactor}
-        onChange={(e) => setXScaleFactor(e.target.value)}
+        onChange={(e) => setXScaleFactor( e.target.value)}
+        inputProps={{ min: 1 }}
       />
+
       <TextField
         size="small"
         label="Y scale"
         type="number"
         value={yScaleFactor}
         onChange={(e) => setYScaleFactor(e.target.value)}
+        inputProps={{ min: 1 }}
       />
     </>
   );
 
   const renderXShearInput = (
     <>
-      <TextField size="small" label="Shear value" type="number" />
+      <TextField size="small" label="Shear value" type="number" value={xShearFactor}
+        onChange={(e) => setXShearFactor( e.target.value)}/>
     </>
   );
 
   const renderYShearInput = (
     <>
-      <TextField size="small" label="Shear value" type="number" />
+      <TextField size="small" label="Shear value" type="number" value={yShearFactor}
+        onChange={(e) => setYShearFactor( e.target.value)}/>
     </>
   );
 

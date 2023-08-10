@@ -1,7 +1,3 @@
-2a Implementação:
-- Transformações (Imagem de forma individual): Rotação, Translação, Escala, Reflexão e Cisalhamento. 
-- Implementar as transformações sob a forma de transformações compostas (Usuário deve poder escolher quais transformações serão feitas, e em que ordem).
-
 4a Implementação:
 - Decomposição de imagens coloridas emplanos monocromáticos passíveis de recomposição. Mostrar a imagem referente a cada componente do espaço de cor. Exemplo para RGB: Mostrar as imagens referentes ao Red, Green e Blue.
 

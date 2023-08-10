@@ -7,7 +7,9 @@ export const transformationOperation = (
   xTranslationFactor?: number,
   yTranslationFactor?: number,
   xScaleFactor?: number,
-  yScaleFactor?: number
+  yScaleFactor?: number,
+  xShearFactor?: number,
+  yShearFactor?: number
 ) => {
   let resultingImageCanva: HTMLCanvasElement | null = null;
 
@@ -23,11 +25,7 @@ export const transformationOperation = (
       );
       break;
     case TransformationOperation.SCALE:
-      resultingImageCanva = scale(
-        image,
-        xScaleFactor ?? 0,
-        yScaleFactor ?? 0
-      );
+      resultingImageCanva = scale(image, xScaleFactor ?? 0, yScaleFactor ?? 0);
       break;
     case TransformationOperation.HORIZONTAL_REFLECTION:
       resultingImageCanva = reflection(
@@ -42,9 +40,19 @@ export const transformationOperation = (
       );
       break;
     case TransformationOperation.X_SHEAR:
+      resultingImageCanva = shear(
+        image,
+        TransformationOperation.X_SHEAR,
+        xShearFactor ?? 0
+      );
       break;
 
     case TransformationOperation.Y_SHEAR:
+      resultingImageCanva = shear(
+        image,
+        TransformationOperation.Y_SHEAR,
+        yShearFactor ?? 0
+      );
       break;
     default:
       console.warn("Invalid transformation operation.");
@@ -153,4 +161,40 @@ const reflection = (
   ctx.drawImage(image, 0, 0);
 
   return canvas;
+};
+
+const shear = (
+  image: HTMLCanvasElement,
+  shearType: TransformationOperation,
+  shearFactor: number
+): HTMLCanvasElement => {
+  const shearedCanvas = document.createElement("canvas");
+  const shearedContext = shearedCanvas.getContext("2d");
+
+  // Calculate the dimensions of the sheared image
+  const shearedWidth = image.width + Math.abs(shearFactor) * image.height;
+  const shearedHeight = image.height + Math.abs(shearFactor) * image.width;
+
+  // Set the canvas dimensions based on the sheared image size
+  shearedCanvas.width = shearedWidth;
+  shearedCanvas.height = shearedHeight;
+
+  // Clear the canvas
+  shearedContext.clearRect(0, 0, shearedCanvas.width, shearedCanvas.height);
+
+  // Apply the shear transformation
+  if (shearType === TransformationOperation.X_SHEAR) {
+    shearedContext.transform(1, 0, shearFactor, 1, 0, 0);
+  } else if (shearType === TransformationOperation.Y_SHEAR) {
+    shearedContext.transform(1, shearFactor, 0, 1, 0, 0);
+  }
+
+  // Draw the original image onto the sheared canvas
+  shearedContext.drawImage(image, 0, 0);
+
+  // Reset transformations
+  shearedContext.setTransform(1, 0, 0, 1, 0, 0);
+
+  // Return the sheared canvas
+  return shearedCanvas;
 };
