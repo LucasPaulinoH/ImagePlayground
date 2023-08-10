@@ -18,6 +18,7 @@ import {
   MenuItem,
   Select,
   Button,
+  TextField,
 } from "@mui/material";
 import { useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -82,6 +83,8 @@ export const SideBar = (props: SideBarProps) => {
   const [transformationSelected, setTranformationSelected] =
     useState<TransformationOperation>(TransformationOperation.ROTATION);
 
+  const [rotationFactor, setRotationFactor] = useState<number>(0);
+
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
       const operationResult: HTMLCanvasElement = arithmeticOperation(
@@ -108,7 +111,8 @@ export const SideBar = (props: SideBarProps) => {
     if (props.images.length > 0) {
       const operationResult: HTMLCanvasElement = transformationOperation(
         props.selectedImages[0],
-        transformationSelected
+        transformationSelected,
+        rotationFactor
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -160,6 +164,44 @@ export const SideBar = (props: SideBarProps) => {
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
   };
+
+  const renderRotationInput = (
+    <>
+      <TextField
+        size="small"
+        label="Degrees (°)"
+        type="number"
+        value={rotationFactor}
+        onChange={(e) => setRotationFactor(e.target.value)}
+      />
+    </>
+  );
+
+  const renderTranslationInputs = (
+    <>
+      <TextField size="small" label="X distance" type="number" />
+      <TextField size="small" label="Y distance" type="number" />
+    </>
+  );
+
+  const renderScaleInputs = (
+    <>
+      <TextField size="small" label="X scale" type="number" />
+      <TextField size="small" label="Y scale" type="number" />
+    </>
+  );
+
+  const renderXShearInput = (
+    <>
+      <TextField size="small" label="Shear value" type="number" />
+    </>
+  );
+
+  const renderYShearInput = (
+    <>
+      <TextField size="small" label="Shear value" type="number" />
+    </>
+  );
 
   const drawer = (
     <Box height="100vh">
@@ -293,9 +335,7 @@ export const SideBar = (props: SideBarProps) => {
                   <MenuItem value={TransformationOperation.VERTICAL_REFLECTION}>
                     Vertical reflection
                   </MenuItem>
-                  <MenuItem
-                    value={TransformationOperation.X_SHEAR}
-                  >
+                  <MenuItem value={TransformationOperation.X_SHEAR}>
                     X shear
                   </MenuItem>
                   <MenuItem value={TransformationOperation.Y_SHEAR}>
@@ -303,11 +343,23 @@ export const SideBar = (props: SideBarProps) => {
                   </MenuItem>
                 </Select>
               </FormControl>
+              {transformationSelected === TransformationOperation.ROTATION
+                ? renderRotationInput
+                : transformationSelected === TransformationOperation.TRANSLATION
+                ? renderTranslationInputs
+                : transformationSelected === TransformationOperation.SCALE
+                ? renderScaleInputs
+                : transformationSelected === TransformationOperation.X_SHEAR
+                ? renderXShearInput
+                : transformationSelected === TransformationOperation.Y_SHEAR
+                ? renderYShearInput
+                : null}
               <Button
                 variant="contained"
                 fullWidth
                 sx={{ textTransform: "none" }}
                 onClick={executeTransformationOperation}
+                disableElevation
               >
                 Apply operation
               </Button>

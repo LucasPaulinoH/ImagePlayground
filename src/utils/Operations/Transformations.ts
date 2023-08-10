@@ -2,12 +2,14 @@ import { TransformationOperation } from "../../types";
 
 export const transformationOperation = (
   image: HTMLCanvasElement,
-  transformationType: TransformationOperation
+  transformationType: TransformationOperation,
+  rotationFactor?: number
 ) => {
   let resultingImageCanva: HTMLCanvasElement | null = null;
 
   switch (transformationType) {
     case TransformationOperation.ROTATION:
+      resultingImageCanva = rotation(image, rotationFactor ?? 0);
       break;
     case TransformationOperation.TRANSLATION:
       break;
@@ -36,6 +38,34 @@ export const transformationOperation = (
   }
 
   return resultingImageCanva;
+};
+
+const rotation = (
+  image: HTMLCanvasElement,
+  rotation: number
+): HTMLCanvasElement => {
+  const rotatedCanvas = document.createElement("canvas");
+  const rotatedContext = rotatedCanvas.getContext("2d");
+
+  const width = image.width;
+  const height = image.height;
+  const diagonal = Math.sqrt(width ** 2 + height ** 2);
+  const rotatedWidth = Math.ceil(diagonal);
+  const rotatedHeight = Math.ceil(diagonal);
+
+  rotatedCanvas.width = rotatedWidth;
+  rotatedCanvas.height = rotatedHeight;
+
+  const centerX = rotatedWidth / 2;
+  const centerY = rotatedHeight / 2;
+
+  rotatedContext.translate(centerX, centerY);
+  rotatedContext.rotate((rotation * Math.PI) / 180);
+  rotatedContext.drawImage(image, -width / 2, -height / 2);
+
+  rotatedContext.setTransform(1, 0, 0, 1, 0, 0);
+
+  return rotatedCanvas;
 };
 
 const reflection = (
