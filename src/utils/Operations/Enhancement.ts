@@ -42,46 +42,45 @@ const interval = (
   image: HTMLCanvasElement,
   intervals: Interval[]
 ): HTMLCanvasElement => {
-  const resultCanvas = document.createElement("canvas");
-  resultCanvas.width = image.width;
-  resultCanvas.height = image.height;
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
 
-  const ctx = resultCanvas.getContext("2d");
-
-  if (ctx) {
-    // Desenhe a imagem original no novo canvas
-    ctx.drawImage(image, 0, 0);
-
-    // Obtenha os pixels da imagem
-    const imageData = ctx.getImageData(
-      0,
-      0,
-      resultCanvas.width,
-      resultCanvas.height
-    );
-    const data = imageData.data;
-
-    // Percorra os pixels e aplique os intervalos de realce por partes
-    for (let i = 0; i < data.length; i += 4) {
-      const pixelValue = data[i]; // Considerando uma imagem em escala de cinza
-
-      // Percorra os intervalos e verifique se o pixel está dentro de algum intervalo
-      for (const interval of intervals) {
-        if (pixelValue >= interval.min && pixelValue <= interval.max) {
-          // Aplique o realce de contraste ajustando o valor do pixel
-          // Neste exemplo, estamos ampliando o contraste multiplicando o valor do pixel
-          const contrastFactor = 2.5; // Fator de ampliação de contraste
-          data[i] = Math.min(pixelValue * contrastFactor, 255);
-          break; // Pule para o próximo pixel após encontrar o intervalo correspondente
-        }
-      }
-    }
-
-    // Atualize os dados da imagem resultante
-    ctx.putImageData(imageData, 0, 0);
+  if (!context) {
+    throw new Error("Could not create canvas context");
   }
 
-  return resultCanvas;
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  context.drawImage(image, 0, 0);
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  intervals.forEach((interval) => {
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      const grayscaleValue = 0.2989 * r + 0.587 * g + 0.114 * b;
+
+      if (grayscaleValue >= interval.min && grayscaleValue <= interval.max) {
+        const darknessFactor = 0.5; 
+        const newR = r * darknessFactor;
+        const newG = g * darknessFactor;
+        const newB = b * darknessFactor;
+
+        data[i] = Math.min(255, Math.max(0, newR));
+        data[i + 1] = Math.min(255, Math.max(0, newG));
+        data[i + 2] = Math.min(255, Math.max(0, newB));
+      }
+    }
+  });
+
+  context.putImageData(imageData, 0, 0);
+
+  return canvas;
 };
 
 const binary = (image: HTMLCanvasElement): HTMLCanvasElement => {

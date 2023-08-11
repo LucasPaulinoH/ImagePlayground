@@ -127,12 +127,12 @@ export const SideBar = (props: SideBarProps) => {
       max: maxIntervalEnhancement,
     };
 
-    if (
-      !enhancementIntervals.some(
-        (interval) =>
-          interval.min === newInterval.min && interval.max === newInterval.max
-      )
-    ) {
+    const isIntervalAlreadyAdded = enhancementIntervals.some(
+      (interval) =>
+        interval.min === newInterval.min && interval.max === newInterval.max
+    );
+
+    if (!isIntervalAlreadyAdded) {
       setEnhancementIntervals((previousIntervals) => [
         ...previousIntervals,
         newInterval,
