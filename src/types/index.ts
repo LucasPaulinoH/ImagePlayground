@@ -54,3 +54,8 @@ export enum EnhancementOperation {
   EXPONENTIAL,
   SQUARED,
 }
+
+export interface Interval {
+  min: number;
+  max: number;
+}

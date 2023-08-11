@@ -20,13 +20,15 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import EmojiSymbolsIcon from "@mui/icons-material/EmojiSymbols";
 import { arithmeticOperation } from "../../utils/Operations/Arithmetic";
 import {
   ArithmeticOperation,
   ColorChannel,
+  EnhancementOperation,
+  Interval,
   LogicOperation,
   PseudocoloringOperation,
   RgbConversion,
@@ -36,7 +38,6 @@ import {
 import { logicOperation } from "../../utils/Operations/Logic";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import Switch from "@mui/material/Switch";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import TransformIcon from "@mui/icons-material/Transform";
@@ -49,6 +50,7 @@ import { pseudocoloringOperation } from "../../utils/Operations/Pseudocoloring";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { transformationOperation } from "../../utils/Operations/Transformations";
+import { enhancementOperation } from "../../utils/Operations/Enhancement";
 
 const drawerWidth = 240;
 
@@ -80,8 +82,15 @@ export const SideBar = (props: SideBarProps) => {
   const [pseudocoloring, setPseudocoloring] = useState(false);
   const [enhancements, setEnhancements] = useState(false);
 
+  const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
+    ZoomOperation.REPLICATION
+  );
   const [transformationSelected, setTranformationSelected] =
     useState<TransformationOperation>(TransformationOperation.ROTATION);
+  const [enhancementSelected, setEnhancementSelected] =
+    useState<EnhancementOperation>(EnhancementOperation.INTERVAL);
+
+  const [zoomFactor, setZoomFactor] = useState<number>(1);
 
   const [rotationFactor, setRotationFactor] = useState<number>(0);
   const [xTranslationFactor, setXTranslationFactor] = useState<number>(0);
@@ -90,6 +99,46 @@ export const SideBar = (props: SideBarProps) => {
   const [yScaleFactor, setYScaleFactor] = useState<number>(1);
   const [xShearFactor, setXShearFactor] = useState<number>(0);
   const [yShearFactor, setYShearFactor] = useState<number>(0);
+
+  const [minIntervalEnhancement, setMinIntervalEnhancement] =
+    useState<number>(0);
+  const [maxIntervalEnhancement, setMaxIntervalEnhancement] =
+    useState<number>(0);
+
+  const [enhancementIntervals, setEnhancementIntervals] = useState<Interval[]>(
+    []
+  );
+  const [enhancementIntervalsString, setEnhancementIntervalsString] =
+    useState<string>("");
+
+  useEffect(
+    () =>
+      enhancementIntervals.forEach((interval) => {
+        setEnhancementIntervalsString(
+          enhancementIntervalsString.concat(`[${interval.min},${interval.max}]`)
+        );
+      }),
+    [enhancementIntervals]
+  );
+
+  const handleAddEnhancementInterval = () => {
+    const newInterval: Interval = {
+      min: minIntervalEnhancement,
+      max: maxIntervalEnhancement,
+    };
+
+    if (
+      !enhancementIntervals.some(
+        (interval) =>
+          interval.min === newInterval.min && interval.max === newInterval.max
+      )
+    ) {
+      setEnhancementIntervals((previousIntervals) => [
+        ...previousIntervals,
+        newInterval,
+      ]);
+    }
+  };
 
   const executeArithmeticOperation = (operationType: ArithmeticOperation) => {
     if (props.images.length > 0) {
@@ -124,7 +173,7 @@ export const SideBar = (props: SideBarProps) => {
         xScaleFactor,
         yScaleFactor,
         xShearFactor,
-        yShearFactor,
+        yShearFactor
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -152,10 +201,11 @@ export const SideBar = (props: SideBarProps) => {
     }
   };
 
-  const executeZoomOperation = (operationType: ZoomOperation) => {
+  const executeZoomOperation = (
+    operationType: ZoomOperation,
+    zoomFactor: number
+  ) => {
     if (props.images.length > 0) {
-      const zoomFactor = Number(prompt("Defina o fator de zoom: "));
-
       const operationResult: HTMLCanvasElement = zoomOperation(
         props.selectedImages[0],
         operationType,
@@ -176,6 +226,29 @@ export const SideBar = (props: SideBarProps) => {
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
   };
+
+  const executeEnhancementOperation = (operationType: EnhancementOperation) => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = enhancementOperation(
+        props.selectedImages[0],
+        operationType,
+        enhancementIntervals
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const renderZoomFactorInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        value={zoomFactor}
+        onChange={(e) => setZoomFactor(e.target.value)}
+        inputProps={{ min: 1 }}
+      />
+    </>
+  );
 
   const renderRotationInput = (
     <>
@@ -215,7 +288,7 @@ export const SideBar = (props: SideBarProps) => {
         label="X scale"
         type="number"
         value={xScaleFactor}
-        onChange={(e) => setXScaleFactor( e.target.value)}
+        onChange={(e) => setXScaleFactor(e.target.value)}
         inputProps={{ min: 1 }}
       />
 
@@ -232,15 +305,78 @@ export const SideBar = (props: SideBarProps) => {
 
   const renderXShearInput = (
     <>
-      <TextField size="small" label="Shear value" type="number" value={xShearFactor}
-        onChange={(e) => setXShearFactor( e.target.value)}/>
+      <TextField
+        size="small"
+        label="Shear value"
+        type="number"
+        value={xShearFactor}
+        onChange={(e) => setXShearFactor(e.target.value)}
+      />
     </>
   );
 
   const renderYShearInput = (
     <>
-      <TextField size="small" label="Shear value" type="number" value={yShearFactor}
-        onChange={(e) => setYShearFactor( e.target.value)}/>
+      <TextField
+        size="small"
+        label="Shear value"
+        type="number"
+        value={yShearFactor}
+        onChange={(e) => setYShearFactor(e.target.value)}
+      />
+    </>
+  );
+
+  const renderAddedIntervals = (
+    <TextField
+      size="small"
+      label="Added intervals"
+      value={enhancementIntervalsString}
+      disabled
+    />
+  );
+
+  const renderIntervalEnhancementsInputs = (
+    <>
+      <TextField
+        size="small"
+        label="Min"
+        type="number"
+        value={minIntervalEnhancement}
+        onChange={(e) => setMinIntervalEnhancement(e.target.value)}
+      />
+      <TextField
+        size="small"
+        label="Max"
+        type="number"
+        value={maxIntervalEnhancement}
+        onChange={(e) => setMaxIntervalEnhancement(e.target.value)}
+      />
+      <Box display="flex" gap={2}>
+        <Button
+          variant="contained"
+          fullWidth
+          color="secondary"
+          sx={{ textTransform: "none", fontSize: "8pt" }}
+          onClick={handleAddEnhancementInterval}
+          disableElevation
+        >
+          Add interval
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          color="error"
+          sx={{ textTransform: "none", fontSize: "8pt" }}
+          onClick={() => {
+            setEnhancementIntervals([]);
+            setEnhancementIntervalsString("");
+          }}
+          disableElevation
+        >
+          Clear
+        </Button>
+      </Box>
     </>
   );
 
@@ -418,32 +554,46 @@ export const SideBar = (props: SideBarProps) => {
           {zoomOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={zoomOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => executeZoomOperation(ZoomOperation.REPLICATION)}
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={zoomSelected}
+                onChange={(e) => setZoomSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value={ZoomOperation.REPLICATION}>
+                  Replication (Zoom IN)
+                </MenuItem>
+                <MenuItem value={ZoomOperation.INTERPOLATION}>
+                  Interpolation (Zoom IN)
+                </MenuItem>
+                <MenuItem value={ZoomOperation.DELETION}>
+                  Deletion (Zoom OUT)
+                </MenuItem>
+                <MenuItem value={ZoomOperation.MEAN_VALUE}>
+                  Mean value (Zoom OUT)
+                </MenuItem>
+              </Select>
+            </FormControl>
+            {renderZoomFactorInput}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              onClick={() => executeZoomOperation(zoomSelected, zoomFactor)}
+              disableElevation
             >
-              <ListItemText primary="Zoom IN (Replication)" />
-            </ListItemButton>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => executeZoomOperation(ZoomOperation.INTERPOLATION)}
-            >
-              <ListItemText primary="Zoom IN (Interpolation)" />
-            </ListItemButton>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => executeZoomOperation(ZoomOperation.DELETION)}
-            >
-              <ListItemText primary="Zoom OUT (Deletion)" />
-            </ListItemButton>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => executeZoomOperation(ZoomOperation.MEAN_VALUE)}
-            >
-              <ListItemText primary="Zoom OUT (Mean Value)" />
-            </ListItemButton>
-          </List>
+              Apply operation
+            </Button>
+          </Box>
         </Collapse>
       </List>
       <Divider />
@@ -542,35 +692,64 @@ export const SideBar = (props: SideBarProps) => {
           {enhancements ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={enhancements} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pt: 1 }}>
-            <Typography sx={{ pl: 4 }} fontWeight="bold">
-              - Linear:
-            </Typography>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="interval" />
-            </ListItemButton>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="binary" />
-            </ListItemButton>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="reverse" />
-            </ListItemButton>
-            <Typography sx={{ pl: 4 }} fontWeight="bold">
-              - Non-linear:
-            </Typography>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="log" />
-            </ListItemButton>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="square root" />
-            </ListItemButton>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="exponential" />
-            </ListItemButton>
-            <ListItemButton sx={{ pl: 6 }}>
-              <ListItemText primary="squared" />
-            </ListItemButton>
-          </List>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            {enhancementSelected === EnhancementOperation.INTERVAL
+              ? renderAddedIntervals
+              : null}
+            <FormControl fullWidth>
+              <Select
+                value={enhancementSelected}
+                onChange={(e) => setEnhancementSelected(e.target.value)}
+                size="small"
+              >
+                <Typography sx={{ pl: 2, mt: 1 }} fontWeight="bold">
+                  Linear:
+                </Typography>
+                <MenuItem value={EnhancementOperation.INTERVAL}>
+                  Interval
+                </MenuItem>
+                <MenuItem value={EnhancementOperation.BINARY}> Binary</MenuItem>
+                <MenuItem value={EnhancementOperation.REVERSE}>
+                  Reverse
+                </MenuItem>
+                <Typography sx={{ pl: 2, mt: 1 }} fontWeight="bold">
+                  Non-linear:
+                </Typography>
+                <MenuItem value={EnhancementOperation.LOG}>
+                  Logarithmic
+                </MenuItem>
+                <MenuItem value={EnhancementOperation.SQUARE_ROOT}>
+                  Square root
+                </MenuItem>
+                <MenuItem value={EnhancementOperation.EXPONENTIAL}>
+                  Exponential
+                </MenuItem>
+                <MenuItem value={EnhancementOperation.SQUARED}>
+                  Squared
+                </MenuItem>
+              </Select>
+            </FormControl>
+            {enhancementSelected === EnhancementOperation.INTERVAL
+              ? renderIntervalEnhancementsInputs
+              : null}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              onClick={() => executeEnhancementOperation(enhancementSelected)}
+              disableElevation
+            >
+              Apply operation
+            </Button>
+          </Box>
         </Collapse>
       </List>
     </Box>
@@ -595,11 +774,6 @@ export const SideBar = (props: SideBarProps) => {
             Workspace
           </Typography>
           <Box display="flex" alignItems="center">
-            <Box display="flex" margin="0px 40px" gap={1} alignItems="center">
-              <Typography>normalize</Typography>
-              <Switch />
-              <Typography>truncation</Typography>
-            </Box>
             <Box>
               <Tooltip title="Add image to workspace">
                 <IconButton sx={{ color: "#ffffff" }}>

@@ -98,20 +98,13 @@ const translation = (
   const translatedCanvas = document.createElement("canvas");
   const translatedContext = translatedCanvas.getContext("2d");
 
-  // Set the canvas dimensions based on the original image size
   translatedCanvas.width = image.width;
   translatedCanvas.height = image.height;
 
-  // Translate the context by the specified distances
   translatedContext.translate(xDistance, yDistance);
-
-  // Draw the original image onto the translated canvas
   translatedContext.drawImage(image, 0, 0);
-
-  // Reset transformations
   translatedContext.setTransform(1, 0, 0, 1, 0, 0);
 
-  // Return the translated canvas
   return translatedCanvas;
 };
 
@@ -130,7 +123,6 @@ const scale = (
   scaledCanvas.height = scaledHeight;
 
   scaledContext.clearRect(0, 0, scaledCanvas.width, scaledCanvas.height);
-
   scaledContext.drawImage(image, 0, 0, scaledWidth, scaledHeight);
 
   return scaledCanvas;
@@ -171,30 +163,30 @@ const shear = (
   const shearedCanvas = document.createElement("canvas");
   const shearedContext = shearedCanvas.getContext("2d");
 
-  // Calculate the dimensions of the sheared image
   const shearedWidth = image.width + Math.abs(shearFactor) * image.height;
   const shearedHeight = image.height + Math.abs(shearFactor) * image.width;
 
-  // Set the canvas dimensions based on the sheared image size
   shearedCanvas.width = shearedWidth;
   shearedCanvas.height = shearedHeight;
 
-  // Clear the canvas
   shearedContext.clearRect(0, 0, shearedCanvas.width, shearedCanvas.height);
 
-  // Apply the shear transformation
   if (shearType === TransformationOperation.X_SHEAR) {
-    shearedContext.transform(1, 0, shearFactor, 1, 0, 0);
+    if (shearFactor >= 0) {
+      shearedContext.transform(1, 0, shearFactor, 1, 0, 0);
+    } else {
+      shearedContext.transform(1, 0, 0, 1, -shearFactor * image.height, 0);
+    }
   } else if (shearType === TransformationOperation.Y_SHEAR) {
-    shearedContext.transform(1, shearFactor, 0, 1, 0, 0);
+    if (shearFactor >= 0) {
+      shearedContext.transform(1, shearFactor, 0, 1, 0, 0);
+    } else {
+      shearedContext.transform(1, 0, 0, 1, 0, -shearFactor * image.width);
+    }
   }
 
-  // Draw the original image onto the sheared canvas
   shearedContext.drawImage(image, 0, 0);
-
-  // Reset transformations
   shearedContext.setTransform(1, 0, 0, 1, 0, 0);
 
-  // Return the sheared canvas
   return shearedCanvas;
 };

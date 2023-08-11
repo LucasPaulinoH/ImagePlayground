@@ -3,7 +3,6 @@ import React, { useState, useRef } from "react";
 import { Box, Button } from "@mui/material";
 import { ImageList, ImageListItem } from "@mui/material";
 import { SideBar } from "../../components/SideBar";
-import { v4 as uuid4 } from "uuid";
 import { convertPGMDataToCanvas } from "../../utils/Conversions";
 
 export const Home = () => {
@@ -111,7 +110,7 @@ export const Home = () => {
                 }`,
               }}
               onClick={() => handleSelectImage(canvas)}
-              key={uuid4()}
+             
             >
               <img
                 src={canvas.toDataURL()}
