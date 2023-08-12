@@ -16,10 +16,10 @@ export const Home = () => {
   ) => {
     const file: File | null = event.target.files?.[0];
     if (!file) return;
-  
+
     try {
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      if (fileExtension === 'pgm') {
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
+      if (fileExtension === "pgm") {
         const pgmData = await readFileAsText(file);
         const canvas = convertPGMDataToCanvas(pgmData);
         setImages((prevImages) => [...prevImages, canvas]);
@@ -50,16 +50,16 @@ export const Home = () => {
   const readFileAsText = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-  
+
       reader.onload = (event) => {
         const text = event.target?.result as string;
         resolve(text);
       };
-  
+
       reader.onerror = (event) => {
         reject(event.target?.error);
       };
-  
+
       reader.readAsText(file);
     });
   };
@@ -88,36 +88,43 @@ export const Home = () => {
   const handleClearPlaygroundClick = () => {
     setImages([]);
     setSelectedImages([]);
-    if(inputRef.current){
+    if (inputRef.current) {
       inputRef.current.value = "";
     }
   };
 
   const renderGallery = (
-    <Box margin='50px 0px'>
+    <Box margin="50px 0px">
       <ImageList cols={4}>
         {images.map((canvas: HTMLCanvasElement) => (
           <ImageListItem>
             <Button
               sx={{
+                width: canvas.width + 10,
+                height: canvas.height + 10,
                 padding: 0,
                 border: `5px solid ${
-                  selectedImages[0] == canvas
-                    ? "#0000FF"
-                    : selectedImages[1] == canvas
-                    ? "#FF0000"
+                  !selectedImages.includes(canvas)
+                    ? "none"
+                    : selectedImages[0] === canvas &&
+                      selectedImages[1] === canvas
+                    ? "#EFABFF"
+                    : selectedImages[0] === canvas
+                    ? "#1982C4"
+                    : selectedImages[1] === canvas
+                    ? "#FF595E"
                     : "none"
                 }`,
+                borderRadius: 1,
               }}
               onClick={() => handleSelectImage(canvas)}
-             
             >
               <img
                 src={canvas.toDataURL()}
                 loading="lazy"
                 alt={`Image`}
                 style={{
-                  borderRadius: 10,
+                  borderRadius: 1,
                 }}
               />
             </Button>
@@ -127,11 +134,7 @@ export const Home = () => {
     </Box>
   );
 
-  const renderPageContent = (
-    <>
-      {renderGallery}
-    </>
-  );
+  const renderPageContent = <>{renderGallery}</>;
 
   return (
     <>

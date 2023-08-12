@@ -766,8 +766,9 @@ export const SideBar = (props: SideBarProps) => {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: "#242424",
+          backgroundColor: "#11151C",
           boxShadow: "none",
+          border: "none"
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
