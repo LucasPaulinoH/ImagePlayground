@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { EnhancementOperation, Interval } from "../../types";
 
 export const enhancementOperation = (

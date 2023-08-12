@@ -237,13 +237,11 @@ const RGBToCMYK = (
 ): HTMLCanvasElement[] => {
   const canvasArray: HTMLCanvasElement[] = [];
 
-  // Create canvas elements for each channel
   const cyanCanvas = document.createElement("canvas");
   const magentaCanvas = document.createElement("canvas");
   const yellowCanvas = document.createElement("canvas");
   const keyCanvas = document.createElement("canvas");
 
-  // Set canvas dimensions
   cyanCanvas.width =
     magentaCanvas.width =
     yellowCanvas.width =
@@ -255,19 +253,16 @@ const RGBToCMYK = (
     keyCanvas.height =
       height;
 
-  // Get canvas contexts
   const cyanContext = cyanCanvas.getContext("2d")!;
   const magentaContext = magentaCanvas.getContext("2d")!;
   const yellowContext = yellowCanvas.getContext("2d")!;
   const keyContext = keyCanvas.getContext("2d")!;
 
-  // Initialize image data arrays for each channel
   const cyanImageData = new Uint8ClampedArray(width * height * 4);
   const magentaImageData = new Uint8ClampedArray(width * height * 4);
   const yellowImageData = new Uint8ClampedArray(width * height * 4);
   const keyImageData = new Uint8ClampedArray(width * height * 4);
 
-  // Iterate through each pixel in the original image
   for (let i = 0; i < image.length; i += 4) {
     const red = image[i];
     const green = image[i + 1];
@@ -282,7 +277,6 @@ const RGBToCMYK = (
     keyImageData.set([key, key, key, 255], i);
   }
 
-  // Put image data onto canvas contexts
   cyanContext.putImageData(new ImageData(cyanImageData, width, height), 0, 0);
   magentaContext.putImageData(
     new ImageData(magentaImageData, width, height),
@@ -296,7 +290,6 @@ const RGBToCMYK = (
   );
   keyContext.putImageData(new ImageData(keyImageData, width, height), 0, 0);
 
-  // Push canvas elements to the result array
   canvasArray.push(cyanCanvas, magentaCanvas, yellowCanvas, keyCanvas);
 
   return canvasArray;

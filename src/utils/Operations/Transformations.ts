@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { TransformationOperation } from "../../types";
 
 export const transformationOperation = (

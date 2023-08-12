@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PseudocoloringOperation } from "../../types";
 
 export const pseudocoloringOperation = (

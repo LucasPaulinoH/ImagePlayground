@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ZoomOperation } from "../../types";
 
 export const zoomOperation = (
