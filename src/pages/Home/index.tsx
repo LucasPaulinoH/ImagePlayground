@@ -95,7 +95,7 @@ export const Home = () => {
 
   const renderGallery = (
     <Box margin="50px 0px">
-      <ImageList cols={4}>
+      <ImageList>
         {images.map((canvas: HTMLCanvasElement) => (
           <ImageListItem>
             <Button
@@ -103,7 +103,7 @@ export const Home = () => {
                 width: canvas.width + 10,
                 height: canvas.height + 10,
                 padding: 0,
-                border: `5px solid ${
+                border: `6px solid ${
                   !selectedImages.includes(canvas)
                     ? "none"
                     : selectedImages[0] === canvas &&

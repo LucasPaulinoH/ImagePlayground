@@ -1,0 +1,26 @@
+Implementação 7:
+• Implemente a técnica de fatiamento de bits.
+  – Apresente os planos de bits de uma imagem. Ex.: para 8 bits, serão 8 
+  planos e consequentemente 8 imagens.
+  
+Implementação 8:
+• Implemente todos os filtros passa-baixas apresentados na 
+aula:
+  – Filtros estatísticos e não-estatísticos
+  – Filtros com prevenção de bordas
+
+Implementação 9:
+• Implemente todos os filtros passa-altas apresentados na aula
+
+Implementação 10:
+• Implemente as técnicas de halftoning apresentados na aula.
+
+Implementação ?:
+• Implemente as técnicas de detecção de pontos, linhas e bordas 
+presentados na aula.
+• Implemente as técnicas de Limiarização Global e Local
+• Implemente a segmentação por crescimento de região
+  – Proximidade de valor escalar
+  – Watersheld
+• OBS.: implementação de técnicas para detecção de junção valerá 
+1,5 pontos extra!

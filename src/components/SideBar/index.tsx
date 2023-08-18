@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Toolbar,
@@ -15,7 +14,6 @@ import {
   Collapse,
   Tooltip,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
   Button,
@@ -52,6 +50,11 @@ import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { transformationOperation } from "../../utils/Operations/Transformations";
 import { enhancementOperation } from "../../utils/Operations/Enhancement";
+import {
+  equalizationOperation,
+  executeGammaCorrection,
+} from "../../utils/Operations/Gama&Equalization";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
 
 const drawerWidth = 240;
 
@@ -80,8 +83,9 @@ export const SideBar = (props: SideBarProps) => {
   const [transformationOpen, setTransformationOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [colorChannelsOpen, setColorChannelsOpen] = useState(false);
-  const [pseudocoloring, setPseudocoloring] = useState(false);
-  const [enhancements, setEnhancements] = useState(false);
+  const [pseudocoloringOpen, setPseudocoloringOpen] = useState(false);
+  const [enhancementsOpen, setEnhancementsOpen] = useState(false);
+  const [gamaAndEqOpen, setGamaAndEqOpen] = useState(false);
 
   const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
     ZoomOperation.REPLICATION
@@ -111,6 +115,10 @@ export const SideBar = (props: SideBarProps) => {
   );
   const [enhancementIntervalsString, setEnhancementIntervalsString] =
     useState<string>("");
+
+  const [gamaFactor, setGamaFactor] = useState<number>(1);
+
+  const [gamaOrEqSelected, setGamaOrEqSelected] = useState<string>("GAMA");
 
   useEffect(
     () =>
@@ -236,6 +244,27 @@ export const SideBar = (props: SideBarProps) => {
         enhancementIntervals
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeGamaCorrectionOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeGammaCorrection(
+        props.selectedImages[0],
+        gamaFactor
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeEqualizationOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement[] = equalizationOperation(
+        props.selectedImages[0]
+      );
+      operationResult.forEach((image) => {
+        props.setImages((previousImages) => [...previousImages, image]);
+      });
     }
   };
 
@@ -378,6 +407,17 @@ export const SideBar = (props: SideBarProps) => {
           Clear
         </Button>
       </Box>
+    </>
+  );
+
+  const renderGamaFactorInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        value={gamaFactor}
+        onChange={(e) => setGamaFactor(e.target.value)}
+      />
     </>
   );
 
@@ -651,14 +691,16 @@ export const SideBar = (props: SideBarProps) => {
       </List>
       <Divider />
       <List>
-        <ListItemButton onClick={() => setPseudocoloring(!pseudocoloring)}>
+        <ListItemButton
+          onClick={() => setPseudocoloringOpen(!pseudocoloringOpen)}
+        >
           <ListItemIcon>
             <InvertColorsIcon />
           </ListItemIcon>
           <ListItemText primary="Pseudocoloring" />
-          {pseudocoloring ? <ExpandLess /> : <ExpandMore />}
+          {pseudocoloringOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={pseudocoloring} timeout="auto" unmountOnExit>
+        <Collapse in={pseudocoloringOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
               sx={{ pl: 4 }}
@@ -685,14 +727,14 @@ export const SideBar = (props: SideBarProps) => {
       </List>
       <Divider />
       <List>
-        <ListItemButton onClick={() => setEnhancements(!enhancements)}>
+        <ListItemButton onClick={() => setEnhancementsOpen(!enhancementsOpen)}>
           <ListItemIcon>
             <AutoAwesomeIcon />
           </ListItemIcon>
           <ListItemText primary="Enhancements" />
-          {enhancements ? <ExpandLess /> : <ExpandMore />}
+          {enhancementsOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={enhancements} timeout="auto" unmountOnExit>
+        <Collapse in={enhancementsOpen} timeout="auto" unmountOnExit>
           <Box
             sx={{
               minWidth: 120,
@@ -753,6 +795,52 @@ export const SideBar = (props: SideBarProps) => {
           </Box>
         </Collapse>
       </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setGamaAndEqOpen(!gamaAndEqOpen)}>
+          <ListItemIcon>
+            <EqualizerIcon />
+          </ListItemIcon>
+          <ListItemText primary="Gama & equalization" />
+          {gamaAndEqOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={gamaAndEqOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={gamaOrEqSelected}
+                onChange={(e) => setGamaOrEqSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value="GAMA">Gama correction</MenuItem>
+                <MenuItem value="EQ">Equalization</MenuItem>
+              </Select>
+            </FormControl>
+            {gamaOrEqSelected === "GAMA" ? renderGamaFactorInput : null}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              onClick={
+                gamaOrEqSelected === "GAMA"
+                  ? executeGamaCorrectionOperation
+                  : executeEqualizationOperation
+              }
+              disableElevation
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
     </Box>
   );
 
@@ -768,7 +856,7 @@ export const SideBar = (props: SideBarProps) => {
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: "#11151C",
           boxShadow: "none",
-          border: "none"
+          border: "none",
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
