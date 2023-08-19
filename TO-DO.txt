@@ -1,8 +1,3 @@
-Implementação 7:
-• Implemente a técnica de fatiamento de bits.
-  – Apresente os planos de bits de uma imagem. Ex.: para 8 bits, serão 8 
-  planos e consequentemente 8 imagens.
-  
 Implementação 8:
 • Implemente todos os filtros passa-baixas apresentados na 
 aula:

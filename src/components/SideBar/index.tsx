@@ -56,6 +56,8 @@ import {
   executeGammaCorrection,
 } from "../../utils/Operations/Gama&Equalization";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
+import LayersIcon from "@mui/icons-material/Layers";
+import { executeBitSlicing } from "../../utils/Operations/BitSlicing";
 
 const drawerWidth = 240;
 
@@ -87,6 +89,7 @@ export const SideBar = (props: SideBarProps) => {
   const [pseudocoloringOpen, setPseudocoloringOpen] = useState(false);
   const [enhancementsOpen, setEnhancementsOpen] = useState(false);
   const [gamaAndEqOpen, setGamaAndEqOpen] = useState(false);
+  const [bitSlicingOpen, setBitSlicingOpen] = useState(false);
 
   const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
     ZoomOperation.REPLICATION
@@ -118,8 +121,9 @@ export const SideBar = (props: SideBarProps) => {
     useState<string>("");
 
   const [gamaFactor, setGamaFactor] = useState<number>(1);
-
   const [gamaOrEqSelected, setGamaOrEqSelected] = useState<string>("GAMA");
+
+  const [bitSlicingFactor, setBitSlicingFactor] = useState<number>(1);
 
   useEffect(
     () =>
@@ -262,6 +266,18 @@ export const SideBar = (props: SideBarProps) => {
     if (props.images.length > 0) {
       const operationResult: HTMLCanvasElement[] = equalizationOperation(
         props.selectedImages[0]
+      );
+      operationResult.forEach((image) => {
+        props.setImages((previousImages) => [...previousImages, image]);
+      });
+    }
+  };
+
+  const executeBitSlicingOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement[] = executeBitSlicing(
+        props.selectedImages[0],
+        bitSlicingFactor
       );
       operationResult.forEach((image) => {
         props.setImages((previousImages) => [...previousImages, image]);
@@ -418,6 +434,19 @@ export const SideBar = (props: SideBarProps) => {
         type="number"
         value={gamaFactor}
         onChange={(e) => setGamaFactor(e.target.value)}
+      />
+    </>
+  );
+
+  const renderBitSlicingFactorInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        label="N° of planes"
+        value={bitSlicingFactor}
+        onChange={(e) => setBitSlicingFactor(e.target.value)}
+        inputProps={{ min: 1 }}
       />
     </>
   );
@@ -835,6 +864,38 @@ export const SideBar = (props: SideBarProps) => {
                   ? executeGamaCorrectionOperation
                   : executeEqualizationOperation
               }
+              disableElevation
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setBitSlicingOpen(!bitSlicingOpen)}>
+          <ListItemIcon>
+            <LayersIcon />
+          </ListItemIcon>
+          <ListItemText primary="Bit slicing" />
+          {bitSlicingOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={bitSlicingOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            {renderBitSlicingFactorInput}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              onClick={executeBitSlicingOperation}
               disableElevation
             >
               Apply operation
