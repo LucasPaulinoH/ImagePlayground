@@ -1,0 +1,34 @@
+export enum LowPassFilters {
+  MEAN_3X3,
+  MEAN_5X5,
+  MEDIAN_3X3,
+  MEDIAN_5X5,
+  MAXIMUM,
+  MINIMUM,
+  MODE,
+  KAWAHARA,
+  TOMIRA_TSUJI,
+  NAGAOE_MATSUYAMA,
+  SOMBOONKAEW,
+}
+
+export enum HighPassFilters {
+  H1,
+  H2,
+  M1,
+  M2,
+  M3,
+  HIGH_BOOST,
+}
+
+export enum HalftoningFilters {
+  ORDERED_DOT_PLOT_2X2,
+  ORDERED_DOT_PLOT_2X3,
+  ORDERED_DOT_PLOT_3X3,
+  DITHERING,
+  FLOYD_STEINBERG,
+  ROGERS,
+  JARVIS_JUDICE_NINKE,
+  STUCKI,
+  STEVENSONE_ARCE,
+}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Toolbar,
@@ -58,6 +57,12 @@ import {
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import LayersIcon from "@mui/icons-material/Layers";
 import { executeBitSlicing } from "../../utils/Operations/BitSlicing";
+import PhotoFilterIcon from "@mui/icons-material/PhotoFilter";
+import {
+  HalftoningFilters,
+  HighPassFilters,
+  LowPassFilters,
+} from "../../types/filters";
 
 const drawerWidth = 240;
 
@@ -90,6 +95,7 @@ export const SideBar = (props: SideBarProps) => {
   const [enhancementsOpen, setEnhancementsOpen] = useState(false);
   const [gamaAndEqOpen, setGamaAndEqOpen] = useState(false);
   const [bitSlicingOpen, setBitSlicingOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
     ZoomOperation.REPLICATION
@@ -98,6 +104,15 @@ export const SideBar = (props: SideBarProps) => {
     useState<TransformationOperation>(TransformationOperation.ROTATION);
   const [enhancementSelected, setEnhancementSelected] =
     useState<EnhancementOperation>(EnhancementOperation.INTERVAL);
+
+  const [filterTypeSelected, setFilterTypeSelected] = useState<string>("HIGH");
+
+  const [lowPassFilterSelected, setLowPassFilterSelected] =
+    useState<LowPassFilters>(LowPassFilters.MEAN_3X3);
+  const [highPassFilterSelected, setHighPassFilterSelected] =
+    useState<HighPassFilters>(HighPassFilters.H1);
+  const [halftoningFilterSelected, setHalftoningFilterSelected] =
+    useState<HalftoningFilters>(HalftoningFilters.ORDERED_DOT_PLOT_2X2);
 
   const [zoomFactor, setZoomFactor] = useState<number>(1);
 
@@ -124,6 +139,8 @@ export const SideBar = (props: SideBarProps) => {
   const [gamaOrEqSelected, setGamaOrEqSelected] = useState<string>("GAMA");
 
   const [bitSlicingFactor, setBitSlicingFactor] = useState<number>(1);
+
+  const [selectedUnity, setSelectedUnity] = useState<number>(1);
 
   useEffect(
     () =>
@@ -451,13 +468,85 @@ export const SideBar = (props: SideBarProps) => {
     </>
   );
 
-  const drawer = (
+  const renderLowPassFiltersSelect = (
+    <FormControl fullWidth>
+      <Select
+        value={lowPassFilterSelected}
+        onChange={(e) => setLowPassFilterSelected(e.target.value)}
+        size="small"
+      >
+        <MenuItem value={LowPassFilters.MEAN_3X3}>Mean (3x3)</MenuItem>
+        <MenuItem value={LowPassFilters.MEAN_5X5}>Mean (5x5)</MenuItem>
+        <MenuItem value={LowPassFilters.MEDIAN_3X3}>Median (3x3)</MenuItem>
+        <MenuItem value={LowPassFilters.MEDIAN_5X5}>Median (5x5)</MenuItem>
+        <MenuItem value={LowPassFilters.MAXIMUM}>Maximum</MenuItem>
+        <MenuItem value={LowPassFilters.MINIMUM}>Minimum</MenuItem>
+        <MenuItem value={LowPassFilters.MODE}>Mode</MenuItem>
+        <MenuItem value={LowPassFilters.KAWAHARA}>Kawahara</MenuItem>
+        <MenuItem value={LowPassFilters.TOMIRA_TSUJI}>Tomita & Tsuji</MenuItem>
+        <MenuItem value={LowPassFilters.NAGAOE_MATSUYAMA}>
+          Nagaoe Matsuyama
+        </MenuItem>
+        <MenuItem value={LowPassFilters.SOMBOONKAEW}>Somboonkaew</MenuItem>
+      </Select>
+    </FormControl>
+  );
+
+  const renderHighPassFiltersSelect = (
+    <FormControl fullWidth>
+      <Select
+        value={highPassFilterSelected}
+        onChange={(e) => setHighPassFilterSelected(e.target.value)}
+        size="small"
+      >
+        <MenuItem value={HighPassFilters.H1}>H1</MenuItem>
+        <MenuItem value={HighPassFilters.H2}>H2</MenuItem>
+        <MenuItem value={HighPassFilters.M1}>M1</MenuItem>
+        <MenuItem value={HighPassFilters.M2}>M2</MenuItem>
+        <MenuItem value={HighPassFilters.M3}>M3</MenuItem>
+        <MenuItem value={HighPassFilters.HIGH_BOOST}>High boost</MenuItem>
+      </Select>
+    </FormControl>
+  );
+
+  const renderHalftoningFiltersSelect = (
+    <FormControl fullWidth>
+      <Select
+        value={halftoningFilterSelected}
+        onChange={(e) => setHalftoningFilterSelected(e.target.value)}
+        size="small"
+      >
+        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_2X2}>
+          Ordered dot plot (2x2)
+        </MenuItem>
+        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_2X3}>
+          Ordered dot plot (2x3)
+        </MenuItem>
+        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_3X3}>
+          Ordered dot plot (3x3)
+        </MenuItem>
+        <MenuItem value={HalftoningFilters.DITHERING}>Dithering</MenuItem>
+        <MenuItem value={HalftoningFilters.FLOYD_STEINBERG}>
+          Floyd & Steinberg
+        </MenuItem>
+        <MenuItem value={HalftoningFilters.ROGERS}>Rogers</MenuItem>
+        <MenuItem value={HalftoningFilters.JARVIS_JUDICE_NINKE}>
+          Jarvis, Judice & Ninke
+        </MenuItem>
+        <MenuItem value={HalftoningFilters.STUCKI}>Stucki</MenuItem>
+        <MenuItem value={HalftoningFilters.STEVENSONE_ARCE}>
+          Stevensone Arce
+        </MenuItem>
+      </Select>
+    </FormControl>
+  );
+  const firstUnitySideBar = (
     <Box height="100vh">
       <Toolbar
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Typography variant="h5" fontWeight="bold">
-          Operations
+          1° Unity
         </Typography>
       </Toolbar>
       <Divider />
@@ -825,6 +914,19 @@ export const SideBar = (props: SideBarProps) => {
           </Box>
         </Collapse>
       </List>
+    </Box>
+  );
+
+  const secondUnitySideBar = (
+    <Box height="100vh">
+      <Toolbar
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          2° Unity
+        </Typography>
+      </Toolbar>
+
       <Divider />
       <List>
         <ListItemButton onClick={() => setGamaAndEqOpen(!gamaAndEqOpen)}>
@@ -903,6 +1005,52 @@ export const SideBar = (props: SideBarProps) => {
           </Box>
         </Collapse>
       </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setFiltersOpen(!filtersOpen)}>
+          <ListItemIcon>
+            <PhotoFilterIcon />
+          </ListItemIcon>
+          <ListItemText primary="Filters" />
+          {filtersOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={filtersOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={filterTypeSelected}
+                onChange={(e) => setFilterTypeSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value="LOW">Low-pass</MenuItem>
+                <MenuItem value="HIGH">High-pass</MenuItem>
+                <MenuItem value="HALF">Halftonings</MenuItem>
+              </Select>
+            </FormControl>
+            {filterTypeSelected === "LOW"
+              ? renderLowPassFiltersSelect
+              : filterTypeSelected === "HIGH"
+              ? renderHighPassFiltersSelect
+              : renderHalftoningFiltersSelect}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
     </Box>
   );
 
@@ -921,10 +1069,32 @@ export const SideBar = (props: SideBarProps) => {
           border: "none",
         }}
       >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Typography variant="h5" noWrap component="div" fontWeight="bold">
             Workspace
           </Typography>
+          <Box>
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={() => setSelectedUnity(0)}
+            >
+              1° unity
+            </Button>
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={() => setSelectedUnity(1)}
+            >
+              2° unity
+            </Button>
+          </Box>
           <Box display="flex" alignItems="center">
             <Box>
               <Tooltip title="Add image to workspace">
@@ -979,7 +1149,7 @@ export const SideBar = (props: SideBarProps) => {
             },
           }}
         >
-          {drawer}
+          {selectedUnity === 0 ? firstUnitySideBar : secondUnitySideBar}
         </Drawer>
         <Drawer
           variant="permanent"
@@ -992,7 +1162,7 @@ export const SideBar = (props: SideBarProps) => {
           }}
           open
         >
-          {drawer}
+          {selectedUnity === 0 ? firstUnitySideBar : secondUnitySideBar}
         </Drawer>
       </Box>
       <Box
