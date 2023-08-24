@@ -67,7 +67,7 @@ export const equalizationOperation = (
   return resultingImagesArray;
 };
 
-export const equalizeImage = (image: HTMLCanvasElement): HTMLCanvasElement => {
+const equalizeImage = (image: HTMLCanvasElement): HTMLCanvasElement => {
   const ctx = image.getContext("2d");
 
   if (!ctx) {

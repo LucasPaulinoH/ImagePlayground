@@ -22,7 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import EmojiSymbolsIcon from "@mui/icons-material/EmojiSymbols";
-import { arithmeticOperation } from "../../utils/Operations/Arithmetic";
+import { arithmeticOperation } from "../../utils/FirstUnityOperations/Arithmetic";
 import {
   ArithmeticOperation,
   ColorChannel,
@@ -34,7 +34,7 @@ import {
   TransformationOperation,
   ZoomOperation,
 } from "../../types";
-import { logicOperation } from "../../utils/Operations/Logic";
+import { logicOperation } from "../../utils/FirstUnityOperations/Logic";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
@@ -43,26 +43,28 @@ import TransformIcon from "@mui/icons-material/Transform";
 import {
   rgbColorChannelOperation,
   rgbConvertion,
-} from "../../utils/Operations/ColorChannels";
-import { zoomOperation } from "../../utils/Operations/Zoom";
-import { pseudocoloringOperation } from "../../utils/Operations/Pseudocoloring";
+} from "../../utils/FirstUnityOperations/ColorChannels";
+import { zoomOperation } from "../../utils/FirstUnityOperations/Zoom";
+import { pseudocoloringOperation } from "../../utils/FirstUnityOperations/Pseudocoloring";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { transformationOperation } from "../../utils/Operations/Transformations";
-import { enhancementOperation } from "../../utils/Operations/Enhancement";
+import { transformationOperation } from "../../utils/FirstUnityOperations/Transformations";
+import { enhancementOperation } from "../../utils/FirstUnityOperations/Enhancement";
 import {
   equalizationOperation,
   executeGammaCorrection,
-} from "../../utils/Operations/Gama&Equalization";
+} from "../../utils/SecondUnityOperations/Gama&Equalization";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import LayersIcon from "@mui/icons-material/Layers";
-import { executeBitSlicing } from "../../utils/Operations/BitSlicing";
+import { executeBitSlicing } from "../../utils/SecondUnityOperations/BitSlicing";
 import PhotoFilterIcon from "@mui/icons-material/PhotoFilter";
 import {
   HalftoningFilters,
   HighPassFilters,
   LowPassFilters,
 } from "../../types/filters";
+import { executeLowPassFilter } from "../../utils/SecondUnityOperations/LowPassFilters";
+import { executeHighPassFilter } from "../../utils/SecondUnityOperations/HighPassFilters";
 
 const drawerWidth = 240;
 
@@ -302,6 +304,25 @@ export const SideBar = (props: SideBarProps) => {
     }
   };
 
+  const executeLowPassFilterOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeLowPassFilter(
+        props.selectedImages[0],
+        lowPassFilterSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeHighPassFilterOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeHighPassFilter(
+        props.selectedImages[0],
+        highPassFilterSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
   const renderZoomFactorInput = (
     <>
       <TextField
@@ -1045,6 +1066,13 @@ export const SideBar = (props: SideBarProps) => {
               fullWidth
               sx={{ textTransform: "none" }}
               disableElevation
+              onClick={() => {
+                if (filterTypeSelected === "LOW") {
+                  executeLowPassFilterOperation();
+                } else if (filterTypeSelected === "HIGH") {
+                  executeHighPassFilterOperation();
+                }
+              }}
             >
               Apply operation
             </Button>

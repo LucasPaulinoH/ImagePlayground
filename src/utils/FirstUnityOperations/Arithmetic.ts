@@ -7,7 +7,6 @@ export const arithmeticOperation = (
   image2: HTMLCanvasElement,
   operation: ArithmeticOperation
 ): HTMLCanvasElement => {
-
   const matrix1 = extractCanvasImageMatrix(image1);
   const matrix2 = extractCanvasImageMatrix(image2);
 
