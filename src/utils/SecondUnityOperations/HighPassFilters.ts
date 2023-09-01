@@ -1,5 +1,5 @@
+// @ts-nocheck
 import { HighPassFilters } from "../../types/filters";
-import { extractCanvasImageMatrix } from "../usualFunctions";
 import { meanFilter } from "./LowPassFilters";
 
 export const executeHighPassFilter = (
