@@ -51,7 +51,7 @@ export const executeLowPassFilter = (
   return resultingImageCanvas;
 };
 
-const meanFilter = (
+export const meanFilter = (
   image: HTMLCanvasElement,
   matrixSize: number
 ): HTMLCanvasElement => {

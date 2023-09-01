@@ -1,4 +1,6 @@
 import { HighPassFilters } from "../../types/filters";
+import { extractCanvasImageMatrix } from "../usualFunctions";
+import { meanFilter } from "./LowPassFilters";
 
 export const executeHighPassFilter = (
   image: HTMLCanvasElement,
@@ -24,7 +26,7 @@ export const executeHighPassFilter = (
       resultingImageCanvas = highPassFilter(image, m3Mask);
       break;
     case HighPassFilters.HIGH_BOOST:
-      resultingImageCanvas = highBoost(image, factor ?? 1);
+      resultingImageCanvas = highBoost(image, 2);
       break;
     default:
       break;
@@ -116,6 +118,30 @@ const highPassFilter = (
   return canvasOut;
 };
 
-const highBoost = (image: HTMLCanvasElement, amplificationFactor: number): HTMLCanvasElement => {
+const highBoost = (
+  image: HTMLCanvasElement,
+  amplificationFactor: number
+): HTMLCanvasElement => {
+  const lowPassImageResult = meanFilter(image, 3);
+
+  const resultContext = lowPassImageResult.getContext('2d')!;
+  const resultImageData = resultContext.getImageData(
+    0,
+    0,
+    image.width,
+    image.height,
+  );
+
+  const parsedFactor = amplificationFactor - 1;
   
+  for (let i = 0; i < resultImageData.data.length; i++) {
+    if((i % 4) !== 3){
+      resultImageData.data[i] =
+      (1 + parsedFactor) * resultImageData.data[i] -
+      resultImageData.data[i + 12 + 4 + (i % 4)];
+    }
+  }
+
+  resultContext.putImageData(resultImageData, 0, 0);
+  return lowPassImageResult;
 };
