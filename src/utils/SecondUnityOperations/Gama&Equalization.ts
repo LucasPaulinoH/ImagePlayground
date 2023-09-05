@@ -7,6 +7,9 @@ export const executeGammaCorrection = (
   image: HTMLCanvasElement,
   gammaFactor: number
 ): HTMLCanvasElement => {
+
+  gammaFactor = 1/gammaFactor ;
+  
   const imageMatrix = extractCanvasImageMatrix(image);
 
   const resultingImageMatrix = new Uint8ClampedArray(imageMatrix.length);
@@ -45,6 +48,7 @@ export const executeGammaCorrection = (
 
   return gammaCorrectedCanvas;
 };
+
 export const equalizationOperation = (
   image: HTMLCanvasElement
 ): HTMLCanvasElement[] => {

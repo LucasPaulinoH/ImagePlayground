@@ -9,24 +9,24 @@ export const extractCanvasImageMatrix = (
   return imageData.data;
 };
 
-export const generateHistogramFromImage = (imageData: Uint8ClampedArray) => {
-  const dataBuffer = new Uint32Array(imageData.buffer);
-  const histBrightness = new Array(256).fill(0);
+export const generateHistogramFromImage = (imageMatrix: Uint8ClampedArray) => {
+  const dataBuffer = new Uint32Array(imageMatrix.buffer);
+  const histogramBrightness = new Array(256).fill(0);
 
-  for (let ind = 0; ind < dataBuffer.length; ind++) {
+  for (let i = 0; i < dataBuffer.length; i++) {
     const rgbArray = [
-      dataBuffer[ind] & 0xff,
-      (dataBuffer[ind] >> 8) & 0xff,
-      (dataBuffer[ind] >> 16) & 0xff,
+      dataBuffer[i] & 0xff,
+      (dataBuffer[i] >> 8) & 0xff,
+      (dataBuffer[i] >> 16) & 0xff,
     ];
 
-    rgbArray.forEach((component) => histBrightness[component]++);
+    rgbArray.forEach((component) => histogramBrightness[component]++);
   }
-  const maxBrightness = Math.max(...histBrightness);
+  const maxBrightness = Math.max(...histogramBrightness);
 
   const histogramCanvas = document.createElement("canvas");
-  histogramCanvas.width = 256;
-  histogramCanvas.height = 150;
+  histogramCanvas.width = 300;
+  histogramCanvas.height = 180;
   const context = histogramCanvas.getContext("2d")!;
 
   const startY = histogramCanvas.height - GUIDE_HEIGHT;
@@ -37,19 +37,17 @@ export const generateHistogramFromImage = (imageData: Uint8ClampedArray) => {
   context.fillStyle = "#fff";
   context.fillRect(0, 0, histogramCanvas.width, histogramCanvas.height);
 
-  for (let ind = 0; ind < 256; ind++) {
-    const x = ind * dx;
+  for (let i = 0; i < 256; i++) {
+    const x = i * dx;
 
-    // Value
-    context.strokeStyle = "#000000";
+    context.strokeStyle = "#031D44";
     context.beginPath();
     context.moveTo(x, startY);
-    context.lineTo(x, startY - histBrightness[ind] * dy);
+    context.lineTo(x, startY - histogramBrightness[i] * dy);
     context.closePath();
     context.stroke();
 
-    // Guide
-    context.strokeStyle = `rgb(${ind}, ${ind}, ${ind})`;
+    context.strokeStyle = `rgb(${i}, ${i}, ${i})`;
     context.beginPath();
     context.moveTo(x, startY);
     context.lineTo(x, histogramCanvas.height);
