@@ -66,6 +66,7 @@ import {
 } from "../../types/filters";
 import { executeLowPassFilter } from "../../utils/SecondUnityOperations/LowPassFilters";
 import { executeHighPassFilter } from "../../utils/SecondUnityOperations/HighPassFilters";
+import { executeHalftoning } from "../../utils/SecondUnityOperations/HalftoningFilters";
 
 const drawerWidth = 240;
 
@@ -324,6 +325,18 @@ export const SideBar = (props: SideBarProps) => {
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
   };
+
+  const executeHalftoningFilterOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeHalftoning(
+        props.selectedImages[0],
+        halftoningFilterSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+
   const renderZoomFactorInput = (
     <>
       <TextField
@@ -562,6 +575,7 @@ export const SideBar = (props: SideBarProps) => {
       </Select>
     </FormControl>
   );
+
   const firstUnitySideBar = (
     <Box height="100vh">
       <Toolbar
@@ -1072,6 +1086,8 @@ export const SideBar = (props: SideBarProps) => {
                   executeLowPassFilterOperation();
                 } else if (filterTypeSelected === "HIGH") {
                   executeHighPassFilterOperation();
+                } else if (filterTypeSelected === "HALF"){
+                  executeHalftoningFilterOperation();
                 }
               }}
             >
