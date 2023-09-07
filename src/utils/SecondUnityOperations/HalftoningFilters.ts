@@ -1,145 +1,221 @@
 import { HalftoningFilters } from "../../types/filters";
 
-export const executeHalftoning = (image: HTMLCanvasElement, halftone: HalftoningFilters) => {
-    let resultingImageCanvas = null;
+export const executeHalftoning = (
+  image: HTMLCanvasElement,
+  halftone: HalftoningFilters
+) => {
+  let resultingImageCanvas = null;
 
-    switch (halftone) {
-      case HalftoningFilters.ORDERED_DOT_PLOT_2X2:
-        resultingImageCanvas = orderedDotPlot2x2(image)
-        break;
-      case HalftoningFilters.ORDERED_DOT_PLOT_2X3:
-        resultingImageCanvas = orderedDotPlot2x3(image)
-        break;
-      case HalftoningFilters.ORDERED_DOT_PLOT_3X3:
-        resultingImageCanvas = orderedDotPlot3x3(image)
-        break;
-      case HalftoningFilters.DITHERING:
-        resultingImageCanvas = dithering(image)
-        break;
-      case HalftoningFilters.FLOYD_STEINBERG:
-        resultingImageCanvas = floydAndSteinberg(image)
-        break;
-      case HalftoningFilters.ROGERS:
-        resultingImageCanvas = rogers(image)
-        break;
-      case HalftoningFilters.JARVIS_JUDICE_NINKE:
-        resultingImageCanvas = jarvisJudiceAndNinke(image)
-        break;
-      case HalftoningFilters.STUCKI:
-        resultingImageCanvas = stucki(image)
-        break;
-      case HalftoningFilters.STEVENSONE_ARCE:
-        resultingImageCanvas = stevensoneArce(image)
-        break;
-      default:
-        console.warn("Invalid halftoning filter selected.")
-        break;
-    } 
-    return resultingImageCanvas;
-}
+  switch (halftone) {
+    case HalftoningFilters.ORDERED_DOT_PLOT_2X2:
+      resultingImageCanvas = orderedDotPlot2x2(image);
+      break;
+    case HalftoningFilters.ORDERED_DOT_PLOT_2X3:
+      resultingImageCanvas = orderedDotPlot2x3(image);
+      break;
+    case HalftoningFilters.ORDERED_DOT_PLOT_3X3:
+      resultingImageCanvas = orderedDotPlot3x3(image);
+      break;
+    case HalftoningFilters.FLOYD_STEINBERG:
+      resultingImageCanvas = floydAndSteinberg(image);
+      break;
+    case HalftoningFilters.ROGERS:
+      resultingImageCanvas = rogers(image);
+      break;
+    case HalftoningFilters.JARVIS_JUDICE_NINKE:
+      resultingImageCanvas = jarvisJudiceAndNinke(image);
+      break;
+    case HalftoningFilters.STUCKI:
+      resultingImageCanvas = stucki(image);
+      break;
+    case HalftoningFilters.STEVENSONE_ARCE:
+      resultingImageCanvas = stevensoneArce(image);
+      break;
+    default:
+      console.warn("Invalid halftoning filter selected.");
+      break;
+  }
+  return resultingImageCanvas;
+};
 
-const orderedDotPlot2x2= (image: HTMLCanvasElement): HTMLCanvasElement => {
-    const ctxIn = image.getContext("2d");
+const ORDERED_DOT_PLOT_2x2_MATRIX = [
+  [0, 2],
+  [3, 1],
+];
 
-  if (!ctxIn) {
-    throw new Error("Não foi possível obter o contexto do canvas de entrada.");
+const ORDERED_DOT_PLOT_2x3_MATRIX = [
+  [3, 0, 4],
+  [5, 2, 1],
+];
+
+const ORDERED_DOT_PLOT_3x3_MATRIX = [
+  [6, 8, 4],
+  [1, 0, 3],
+  [5, 2, 7],
+];
+
+const FLOYD_STEINBERG_MATRIX = [
+  [0, 0, 7],
+  [3, 5, 1],
+];
+const ROGERS = [
+  [0, 1, 0],
+  [1, 1, 1],
+  [0, 1, 0],
+];
+const JARVIS_JUDICE_NINKE = [
+  [0, 0, 0, 7, 5],
+  [3, 5, 7, 5, 3],
+  [1, 3, 5, 3, 1],
+];
+const STUCKI = [
+  [0, 0, 0, 8, 4],
+  [2, 4, 8, 4, 2],
+  [1, 2, 4, 2, 1],
+];
+const STEVENSONE_ARCE = [
+  [0, 0, 0, 32, 0, 0],
+  [12, 0, 26, 0, 30, 0],
+  [0, 12, 0, 26, 0, 12],
+  [5, 0, 12, 0, 12, 0],
+];
+
+const applyOrderedDotPlot = (
+  matrix: number[][],
+  image: HTMLCanvasElement
+): HTMLCanvasElement => {
+  const canvas = createCanvasFromImage(image);
+  const ctx = canvas.getContext("2d");
+
+  if (ctx) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const pixelIndex = (y * canvas.width + x) * 4;
+        const grayValue =
+          (data[pixelIndex] + data[pixelIndex + 1] + data[pixelIndex + 2]) / 3;
+        const threshold =
+          (matrix[y % matrix.length][x % matrix[0].length] * 255) /
+          (matrix.length * matrix[0].length);
+        const newColor = grayValue > threshold ? 255 : 0;
+
+        data[pixelIndex] = newColor;
+        data[pixelIndex + 1] = newColor;
+        data[pixelIndex + 2] = newColor;
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
   }
 
-  // Cria um novo canvas para a imagem resultante
-  const resultCanvas = document.createElement("canvas");
-  const ctxOut = resultCanvas.getContext("2d");
+  return canvas;
+};
 
-  if (!ctxOut) {
-    throw new Error("Não foi possível obter o contexto do canvas de saída.");
+const orderedDotPlot2x2 = (image: HTMLCanvasElement): HTMLCanvasElement =>
+  applyOrderedDotPlot(ORDERED_DOT_PLOT_2x2_MATRIX, image);
+
+const orderedDotPlot2x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
+  applyOrderedDotPlot(ORDERED_DOT_PLOT_2x3_MATRIX, image);
+
+const orderedDotPlot3x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
+  applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image);
+
+const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const ctx = image.getContext("2d");
+  const imageData = ctx.getImageData(0, 0, image.width, image.height);
+  const pixels: number[] = [];
+
+  // Convert image data to a 2D pixel array
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    pixels.push(
+      imageData.data[i],
+      imageData.data[i + 1],
+      imageData.data[i + 2]
+    );
   }
 
-  // Define o tamanho do canvas de saída igual ao tamanho do canvas de entrada
-  resultCanvas.width = image.width;
-  resultCanvas.height = image.height;
+  const width = image.width;
 
-  // Define uma matriz de meios-tons 2x2 (pode ser personalizada)
-  const thresholdMatrix = [[15, 135], [195, 75]];
+  for (let y = 0; y < image.height - 1; y++) {
+    for (let x = 1; x < image.width - 1; x++) {
+      const pixelIndex = (y * width + x) * 3; // Each pixel has three color channels
 
-  // Percorre a imagem pixel a pixel e aplica a técnica de meios-tons
-  for (let y = 0; y < image.height; y++) {
-    for (let x = 0; x < image.width; x++) {
-      const pixelData = ctxIn.getImageData(x, y, 1, 1).data;
-      const grayValue = (pixelData[0] + pixelData[1] + pixelData[2]) / 3;
-      const threshold = thresholdMatrix[y % 2][x % 2];
-      const newPixelValue = grayValue < threshold ? 0 : 255;
+      const oldPixel = pixels.slice(pixelIndex, pixelIndex + 3);
 
-      ctxOut.fillStyle = `rgb(${newPixelValue}, ${newPixelValue}, ${newPixelValue})`;
-      ctxOut.fillRect(x, y, 1, 1);
+      // Map pixel values to the nearest color level
+      const newPixel = oldPixel.map(
+        (channel, index) =>
+          Math.round(channel * (FLOYD_STEINBERG_MATRIX[0][2] / 16)) /
+          (FLOYD_STEINBERG_MATRIX[0][2] / 16)
+      );
+
+      pixels.splice(pixelIndex, 3, ...newPixel);
+
+      const error = oldPixel.map((channel, index) => channel - newPixel[index]);
+
+      // Diffuse the error to neighboring pixels
+      pixels
+        .slice(pixelIndex + 3, pixelIndex + 6)
+        .forEach((neighbor, index) => {
+          pixels[pixelIndex + index + 3] +=
+            (error[index] * FLOYD_STEINBERG_MATRIX[0][2]) / 16;
+        });
+
+      pixels
+        .slice(pixelIndex + width * 3 - 3, pixelIndex + width * 3)
+        .forEach((neighbor, index) => {
+          pixels[pixelIndex + width * 3 - 3 + index] +=
+            (error[index] * FLOYD_STEINBERG_MATRIX[1][0]) / 16;
+        });
+
+      pixels
+        .slice(pixelIndex + width * 3, pixelIndex + width * 3 + 3)
+        .forEach((neighbor, index) => {
+          pixels[pixelIndex + width * 3 + index] +=
+            (error[index] * FLOYD_STEINBERG_MATRIX[1][1]) / 16;
+        });
+
+      pixels
+        .slice(pixelIndex + width * 3 + 3, pixelIndex + width * 3 + 6)
+        .forEach((neighbor, index) => {
+          pixels[pixelIndex + width * 3 + 3 + index] +=
+            (error[index] * FLOYD_STEINBERG_MATRIX[1][2]) / 16;
+        });
     }
   }
 
-  return resultCanvas;
-}
+  // Convert the 2D pixel array back to image data
+  const newImageData = new ImageData(
+    new Uint8ClampedArray(pixels),
+    image.width,
+    image.height
+  );
 
-const orderedDotPlot2x3= (image: HTMLCanvasElement) => {
-    const ctxIn = image.getContext("2d");
+  // Put the modified image data back onto the canvas
+  ctx.putImageData(newImageData, 0, 0);
 
-    if (!ctxIn) {
-      throw new Error("Não foi possível obter o contexto do canvas de entrada.");
-    }
-  
-    const resultCanvas = document.createElement("canvas");
-    const ctxOut = resultCanvas.getContext("2d");
-  
-    if (!ctxOut) {
-      throw new Error("Não foi possível obter o contexto do canvas de saída.");
-    }
-  
-    resultCanvas.width = image.width;
-    resultCanvas.height = image.height;
-  
-    const thresholdMatrix = [[15, 135, 45], [195, 75, 105]];
-  
-    const inputImageData = ctxIn.getImageData(0, 0, image.width, image.height);
-    const outputImageData = ctxOut.createImageData(image.width, image.height);
-  
-    for (let i = 0; i < inputImageData.data.length; i += 4) {
-      const x = (i / 4) % image.width;
-      const y = Math.floor(i / (4 * image.width));
-      const grayValue = (inputImageData.data[i] + inputImageData.data[i + 1] + inputImageData.data[i + 2]) / 3;
-      const threshold = thresholdMatrix[y % 2][x % 3];
-      const newPixelValue = grayValue < threshold ? 0 : 255;
-  
-      outputImageData.data[i] = newPixelValue;
-      outputImageData.data[i + 1] = newPixelValue;
-      outputImageData.data[i + 2] = newPixelValue;
-      outputImageData.data[i + 3] = 255;
-    }
-  
-    ctxOut.putImageData(outputImageData, 0, 0);
-  
-    return resultCanvas;
-}
+  return image;
+};
 
-const orderedDotPlot3x3= (image: HTMLCanvasElement) => {
-    
-}
+const rogers = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 
-const dithering = (image: HTMLCanvasElement) => {
+const jarvisJudiceAndNinke = (
+  image: HTMLCanvasElement
+): HTMLCanvasElement => {};
 
-}
+const stucki = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 
-const floydAndSteinberg = (image: HTMLCanvasElement) => {
+const stevensoneArce = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 
-}
-
-const rogers = (image: HTMLCanvasElement) => {
-
-}
-
-const jarvisJudiceAndNinke = (image: HTMLCanvasElement) => {
-
-}
-
-const stucki = (image: HTMLCanvasElement) => {
-
-}
-
-const stevensoneArce = (image: HTMLCanvasElement) => {
-
+function createCanvasFromImage(image: HTMLCanvasElement): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.drawImage(image, 0, 0);
+  }
+  return canvas;
 }

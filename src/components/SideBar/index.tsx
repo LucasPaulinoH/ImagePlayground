@@ -336,7 +336,6 @@ export const SideBar = (props: SideBarProps) => {
     }
   };
 
-
   const renderZoomFactorInput = (
     <>
       <TextField
@@ -560,7 +559,6 @@ export const SideBar = (props: SideBarProps) => {
         <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_3X3}>
           Ordered dot plot (3x3)
         </MenuItem>
-        <MenuItem value={HalftoningFilters.DITHERING}>Dithering</MenuItem>
         <MenuItem value={HalftoningFilters.FLOYD_STEINBERG}>
           Floyd & Steinberg
         </MenuItem>
@@ -1086,7 +1084,7 @@ export const SideBar = (props: SideBarProps) => {
                   executeLowPassFilterOperation();
                 } else if (filterTypeSelected === "HIGH") {
                   executeHighPassFilterOperation();
-                } else if (filterTypeSelected === "HALF"){
+                } else if (filterTypeSelected === "HALF") {
                   executeHalftoningFilterOperation();
                 }
               }}
