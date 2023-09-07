@@ -1,31 +1,31 @@
 // @ts-nocheck
-import { HighPassFilters } from "../../types/filters";
+import { HighPassFilter } from "../../types/filters";
 import { meanFilter } from "./LowPassFilters";
 
 export const executeHighPassFilter = (
   image: HTMLCanvasElement,
-  highPassFilterType: HighPassFilters,
+  highPassFilterType: HighPassFilter,
   factor?: number
 ): HTMLCanvasElement => {
   let resultingImageCanvas = null;
 
   switch (highPassFilterType) {
-    case HighPassFilters.H1:
+    case HighPassFilter.H1:
       resultingImageCanvas = highPassFilter(image, h1Mask);
       break;
-    case HighPassFilters.H2:
+    case HighPassFilter.H2:
       resultingImageCanvas = highPassFilter(image, h2Mask);
       break;
-    case HighPassFilters.M1:
+    case HighPassFilter.M1:
       resultingImageCanvas = highPassFilter(image, m1Mask);
       break;
-    case HighPassFilters.M2:
+    case HighPassFilter.M2:
       resultingImageCanvas = highPassFilter(image, m2Mask);
       break;
-    case HighPassFilters.M3:
+    case HighPassFilter.M3:
       resultingImageCanvas = highPassFilter(image, m3Mask);
       break;
-    case HighPassFilters.HIGH_BOOST:
+    case HighPassFilter.HIGH_BOOST:
       resultingImageCanvas = highBoost(image, 2);
       break;
     default:
@@ -124,21 +124,21 @@ const highBoost = (
 ): HTMLCanvasElement => {
   const lowPassImageResult = meanFilter(image, 3);
 
-  const resultContext = lowPassImageResult.getContext('2d')!;
+  const resultContext = lowPassImageResult.getContext("2d")!;
   const resultImageData = resultContext.getImageData(
     0,
     0,
     image.width,
-    image.height,
+    image.height
   );
 
   const parsedFactor = amplificationFactor - 1;
-  
+
   for (let i = 0; i < resultImageData.data.length; i++) {
-    if((i % 4) !== 3){
+    if (i % 4 !== 3) {
       resultImageData.data[i] =
-      (1 + parsedFactor) * resultImageData.data[i] -
-      resultImageData.data[i + 12 + 4 + (i % 4)];
+        (1 + parsedFactor) * resultImageData.data[i] -
+        resultImageData.data[i + 12 + 4 + (i % 4)];
     }
   }
 

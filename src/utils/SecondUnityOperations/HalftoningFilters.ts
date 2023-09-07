@@ -1,34 +1,34 @@
-import { HalftoningFilters } from "../../types/filters";
+import { HalftoningFilter } from "../../types/filters";
 
 export const executeHalftoning = (
   image: HTMLCanvasElement,
-  halftone: HalftoningFilters
+  halftone: HalftoningFilter
 ) => {
   let resultingImageCanvas = null;
 
   switch (halftone) {
-    case HalftoningFilters.ORDERED_DOT_PLOT_2X2:
+    case HalftoningFilter.ORDERED_DOT_PLOT_2X2:
       resultingImageCanvas = orderedDotPlot2x2(image);
       break;
-    case HalftoningFilters.ORDERED_DOT_PLOT_2X3:
+    case HalftoningFilter.ORDERED_DOT_PLOT_2X3:
       resultingImageCanvas = orderedDotPlot2x3(image);
       break;
-    case HalftoningFilters.ORDERED_DOT_PLOT_3X3:
+    case HalftoningFilter.ORDERED_DOT_PLOT_3X3:
       resultingImageCanvas = orderedDotPlot3x3(image);
       break;
-    case HalftoningFilters.FLOYD_STEINBERG:
+    case HalftoningFilter.FLOYD_STEINBERG:
       resultingImageCanvas = floydAndSteinberg(image);
       break;
-    case HalftoningFilters.ROGERS:
+    case HalftoningFilter.ROGERS:
       resultingImageCanvas = rogers(image);
       break;
-    case HalftoningFilters.JARVIS_JUDICE_NINKE:
+    case HalftoningFilter.JARVIS_JUDICE_NINKE:
       resultingImageCanvas = jarvisJudiceAndNinke(image);
       break;
-    case HalftoningFilters.STUCKI:
+    case HalftoningFilter.STUCKI:
       resultingImageCanvas = stucki(image);
       break;
-    case HalftoningFilters.STEVENSONE_ARCE:
+    case HalftoningFilter.STEVENSONE_ARCE:
       resultingImageCanvas = stevensoneArce(image);
       break;
     default:
@@ -122,82 +122,7 @@ const orderedDotPlot2x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
 const orderedDotPlot3x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
   applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image);
 
-const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
-  const ctx = image.getContext("2d");
-  const imageData = ctx.getImageData(0, 0, image.width, image.height);
-  const pixels: number[] = [];
-
-  // Convert image data to a 2D pixel array
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    pixels.push(
-      imageData.data[i],
-      imageData.data[i + 1],
-      imageData.data[i + 2]
-    );
-  }
-
-  const width = image.width;
-
-  for (let y = 0; y < image.height - 1; y++) {
-    for (let x = 1; x < image.width - 1; x++) {
-      const pixelIndex = (y * width + x) * 3; // Each pixel has three color channels
-
-      const oldPixel = pixels.slice(pixelIndex, pixelIndex + 3);
-
-      // Map pixel values to the nearest color level
-      const newPixel = oldPixel.map(
-        (channel, index) =>
-          Math.round(channel * (FLOYD_STEINBERG_MATRIX[0][2] / 16)) /
-          (FLOYD_STEINBERG_MATRIX[0][2] / 16)
-      );
-
-      pixels.splice(pixelIndex, 3, ...newPixel);
-
-      const error = oldPixel.map((channel, index) => channel - newPixel[index]);
-
-      // Diffuse the error to neighboring pixels
-      pixels
-        .slice(pixelIndex + 3, pixelIndex + 6)
-        .forEach((neighbor, index) => {
-          pixels[pixelIndex + index + 3] +=
-            (error[index] * FLOYD_STEINBERG_MATRIX[0][2]) / 16;
-        });
-
-      pixels
-        .slice(pixelIndex + width * 3 - 3, pixelIndex + width * 3)
-        .forEach((neighbor, index) => {
-          pixels[pixelIndex + width * 3 - 3 + index] +=
-            (error[index] * FLOYD_STEINBERG_MATRIX[1][0]) / 16;
-        });
-
-      pixels
-        .slice(pixelIndex + width * 3, pixelIndex + width * 3 + 3)
-        .forEach((neighbor, index) => {
-          pixels[pixelIndex + width * 3 + index] +=
-            (error[index] * FLOYD_STEINBERG_MATRIX[1][1]) / 16;
-        });
-
-      pixels
-        .slice(pixelIndex + width * 3 + 3, pixelIndex + width * 3 + 6)
-        .forEach((neighbor, index) => {
-          pixels[pixelIndex + width * 3 + 3 + index] +=
-            (error[index] * FLOYD_STEINBERG_MATRIX[1][2]) / 16;
-        });
-    }
-  }
-
-  // Convert the 2D pixel array back to image data
-  const newImageData = new ImageData(
-    new Uint8ClampedArray(pixels),
-    image.width,
-    image.height
-  );
-
-  // Put the modified image data back onto the canvas
-  ctx.putImageData(newImageData, 0, 0);
-
-  return image;
-};
+const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 
 const rogers = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 

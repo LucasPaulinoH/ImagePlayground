@@ -1,4 +1,4 @@
-export enum LowPassFilters {
+export enum LowPassFilter {
   MEAN_3X3,
   MEAN_5X5,
   MEDIAN_3X3,
@@ -12,7 +12,7 @@ export enum LowPassFilters {
   SOMBOONKAEW,
 }
 
-export enum HighPassFilters {
+export enum HighPassFilter {
   H1,
   H2,
   M1,
@@ -21,7 +21,7 @@ export enum HighPassFilters {
   HIGH_BOOST,
 }
 
-export enum HalftoningFilters {
+export enum HalftoningFilter {
   ORDERED_DOT_PLOT_2X2,
   ORDERED_DOT_PLOT_2X3,
   ORDERED_DOT_PLOT_3X3,
@@ -30,4 +30,24 @@ export enum HalftoningFilters {
   JARVIS_JUDICE_NINKE,
   STUCKI,
   STEVENSONE_ARCE,
+}
+
+export enum BorderDetectionFilter {
+  ROBERTS,
+  CROSSED_ROBERTS,
+  PREWIIT_GX,
+  PREWIIT_GY,
+  MAGNITUDE_PREWIITE,
+  SOBEL_GX,
+  SOBEL_GY,
+  MAGNITUDE_SOBEL,
+  KRISH,
+  ROBINSON,
+  FREY_CHEN,
+  LAPLACIAN_H1,
+  LAPLACIAN_H2,
+}
+
+export enum LineDetectionFilter {
+  HORIZONTAL, VERTICAL, DEGREES_45, DEGREES_135
 }

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {
-  LowPassFilters as LowPassFilter,
-  LowPassFilters,
+  LowPassFilter as LowPassFilter,
+  LowPassFilter,
 } from "../../types/filters";
 
 export const executeLowPassFilter = (
@@ -11,37 +11,37 @@ export const executeLowPassFilter = (
   let resultingImageCanvas = null;
 
   switch (lowPassFilterType) {
-    case LowPassFilters.MEAN_3X3:
+    case LowPassFilter.MEAN_3X3:
       resultingImageCanvas = meanFilter(image, 3);
       break;
-    case LowPassFilters.MEAN_5X5:
+    case LowPassFilter.MEAN_5X5:
       resultingImageCanvas = meanFilter(image, 5);
       break;
-    case LowPassFilters.MEDIAN_3X3:
+    case LowPassFilter.MEDIAN_3X3:
       resultingImageCanvas = medianFilter(image, 3);
       break;
-    case LowPassFilters.MEDIAN_5X5:
+    case LowPassFilter.MEDIAN_5X5:
       resultingImageCanvas = medianFilter(image, 5);
       break;
-    case LowPassFilters.MAXIMUM:
+    case LowPassFilter.MAXIMUM:
       resultingImageCanvas = maximum(image, 5);
       break;
-    case LowPassFilters.MINIMUM:
+    case LowPassFilter.MINIMUM:
       resultingImageCanvas = minimum(image, 5);
       break;
-    case LowPassFilters.MODE:
+    case LowPassFilter.MODE:
       resultingImageCanvas = mode(image, 5);
       break;
-    case LowPassFilters.KAWAHARA:
+    case LowPassFilter.KAWAHARA:
       resultingImageCanvas = kawahara(image);
       break;
-    case LowPassFilters.TOMIRA_TSUJI:
+    case LowPassFilter.TOMIRA_TSUJI:
       resultingImageCanvas = tomiraAndTsuji(image);
       break;
-    case LowPassFilters.NAGAOE_MATSUYAMA:
+    case LowPassFilter.NAGAOE_MATSUYAMA:
       resultingImageCanvas = nagaoeMatsuyama(image);
       break;
-    case LowPassFilters.SOMBOONKAEW:
+    case LowPassFilter.SOMBOONKAEW:
       resultingImageCanvas = Somboonkaew(image);
       break;
 

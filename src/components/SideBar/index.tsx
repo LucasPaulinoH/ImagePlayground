@@ -60,13 +60,21 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { executeBitSlicing } from "../../utils/SecondUnityOperations/BitSlicing";
 import PhotoFilterIcon from "@mui/icons-material/PhotoFilter";
 import {
-  HalftoningFilters,
-  HighPassFilters,
-  LowPassFilters,
+  BorderDetectionFilter,
+  HalftoningFilter,
+  HighPassFilter,
+  LineDetectionFilter,
+  LowPassFilter,
 } from "../../types/filters";
 import { executeLowPassFilter } from "../../utils/SecondUnityOperations/LowPassFilters";
 import { executeHighPassFilter } from "../../utils/SecondUnityOperations/HighPassFilters";
 import { executeHalftoning } from "../../utils/SecondUnityOperations/HalftoningFilters";
+import BorderStyleIcon from "@mui/icons-material/BorderStyle";
+import { executeBorderDetection } from "../../utils/SecondUnityOperations/BorderDetection";
+import WorkspacesIcon from "@mui/icons-material/Workspaces";
+import { executeDotDetection } from "../../utils/SecondUnityOperations/DotDetection";
+import GridGoldenratioIcon from '@mui/icons-material/GridGoldenratio';
+import { executeLineDetection } from "../../utils/SecondUnityOperations/LineDetection";
 
 const drawerWidth = 240;
 
@@ -100,6 +108,9 @@ export const SideBar = (props: SideBarProps) => {
   const [gamaAndEqOpen, setGamaAndEqOpen] = useState(false);
   const [bitSlicingOpen, setBitSlicingOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [dotDetectionOpen, setDotDetectionOpen] = useState(false);
+  const [lineDetectionOpen, setLineDetectionOpen] = useState(false);
+  const [borderDetectionOpen, setBorderDetectionOpen] = useState(false);
 
   const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
     ZoomOperation.REPLICATION
@@ -111,12 +122,17 @@ export const SideBar = (props: SideBarProps) => {
 
   const [filterTypeSelected, setFilterTypeSelected] = useState<string>("HIGH");
 
+  const [lineDetectionSelected, setLineDetectionSelected] =
+    useState<LineDetectionFilter>(LineDetectionFilter.HORIZONTAL);
+  const [borderDetectionSelected, setBorderDetectionSelected] =
+    useState<BorderDetectionFilter>(BorderDetectionFilter.ROBERTS);
+
   const [lowPassFilterSelected, setLowPassFilterSelected] =
-    useState<LowPassFilters>(LowPassFilters.MEAN_3X3);
+    useState<LowPassFilter>(LowPassFilter.MEAN_3X3);
   const [highPassFilterSelected, setHighPassFilterSelected] =
-    useState<HighPassFilters>(HighPassFilters.H1);
+    useState<HighPassFilter>(HighPassFilter.H1);
   const [halftoningFilterSelected, setHalftoningFilterSelected] =
-    useState<HalftoningFilters>(HalftoningFilters.ORDERED_DOT_PLOT_2X2);
+    useState<HalftoningFilter>(HalftoningFilter.ORDERED_DOT_PLOT_2X2);
 
   const [zoomFactor, setZoomFactor] = useState<number>(1);
 
@@ -143,6 +159,7 @@ export const SideBar = (props: SideBarProps) => {
   const [gamaOrEqSelected, setGamaOrEqSelected] = useState<string>("GAMA");
 
   const [bitSlicingFactor, setBitSlicingFactor] = useState<number>(1);
+  const [dotDetectionFactor, setDotDetectionFactor] = useState<number>();
 
   const [selectedUnity, setSelectedUnity] = useState<number>(1);
 
@@ -336,6 +353,36 @@ export const SideBar = (props: SideBarProps) => {
     }
   };
 
+  const executeDotDetectionOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeDotDetection(
+        props.selectedImages[0],
+        dotDetectionFactor
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeLineDetectionOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeLineDetection(
+        props.selectedImages[0],
+        lineDetectionSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeBorderDetectionOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeBorderDetection(
+        props.selectedImages[0],
+        borderDetectionSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
   const renderZoomFactorInput = (
     <>
       <TextField
@@ -509,19 +556,19 @@ export const SideBar = (props: SideBarProps) => {
         onChange={(e) => setLowPassFilterSelected(e.target.value)}
         size="small"
       >
-        <MenuItem value={LowPassFilters.MEAN_3X3}>Mean (3x3)</MenuItem>
-        <MenuItem value={LowPassFilters.MEAN_5X5}>Mean (5x5)</MenuItem>
-        <MenuItem value={LowPassFilters.MEDIAN_3X3}>Median (3x3)</MenuItem>
-        <MenuItem value={LowPassFilters.MEDIAN_5X5}>Median (5x5)</MenuItem>
-        <MenuItem value={LowPassFilters.MAXIMUM}>Maximum</MenuItem>
-        <MenuItem value={LowPassFilters.MINIMUM}>Minimum</MenuItem>
-        <MenuItem value={LowPassFilters.MODE}>Mode</MenuItem>
-        <MenuItem value={LowPassFilters.KAWAHARA}>Kawahara</MenuItem>
-        <MenuItem value={LowPassFilters.TOMIRA_TSUJI}>Tomita & Tsuji</MenuItem>
-        <MenuItem value={LowPassFilters.NAGAOE_MATSUYAMA}>
+        <MenuItem value={LowPassFilter.MEAN_3X3}>Mean (3x3)</MenuItem>
+        <MenuItem value={LowPassFilter.MEAN_5X5}>Mean (5x5)</MenuItem>
+        <MenuItem value={LowPassFilter.MEDIAN_3X3}>Median (3x3)</MenuItem>
+        <MenuItem value={LowPassFilter.MEDIAN_5X5}>Median (5x5)</MenuItem>
+        <MenuItem value={LowPassFilter.MAXIMUM}>Maximum</MenuItem>
+        <MenuItem value={LowPassFilter.MINIMUM}>Minimum</MenuItem>
+        <MenuItem value={LowPassFilter.MODE}>Mode</MenuItem>
+        <MenuItem value={LowPassFilter.KAWAHARA}>Kawahara</MenuItem>
+        <MenuItem value={LowPassFilter.TOMIRA_TSUJI}>Tomita & Tsuji</MenuItem>
+        <MenuItem value={LowPassFilter.NAGAOE_MATSUYAMA}>
           Nagaoe Matsuyama
         </MenuItem>
-        <MenuItem value={LowPassFilters.SOMBOONKAEW}>Somboonkaew</MenuItem>
+        <MenuItem value={LowPassFilter.SOMBOONKAEW}>Somboonkaew</MenuItem>
       </Select>
     </FormControl>
   );
@@ -533,12 +580,12 @@ export const SideBar = (props: SideBarProps) => {
         onChange={(e) => setHighPassFilterSelected(e.target.value)}
         size="small"
       >
-        <MenuItem value={HighPassFilters.H1}>H1</MenuItem>
-        <MenuItem value={HighPassFilters.H2}>H2</MenuItem>
-        <MenuItem value={HighPassFilters.M1}>M1</MenuItem>
-        <MenuItem value={HighPassFilters.M2}>M2</MenuItem>
-        <MenuItem value={HighPassFilters.M3}>M3</MenuItem>
-        <MenuItem value={HighPassFilters.HIGH_BOOST}>High boost</MenuItem>
+        <MenuItem value={HighPassFilter.H1}>H1</MenuItem>
+        <MenuItem value={HighPassFilter.H2}>H2</MenuItem>
+        <MenuItem value={HighPassFilter.M1}>M1</MenuItem>
+        <MenuItem value={HighPassFilter.M2}>M2</MenuItem>
+        <MenuItem value={HighPassFilter.M3}>M3</MenuItem>
+        <MenuItem value={HighPassFilter.HIGH_BOOST}>High boost</MenuItem>
       </Select>
     </FormControl>
   );
@@ -550,28 +597,40 @@ export const SideBar = (props: SideBarProps) => {
         onChange={(e) => setHalftoningFilterSelected(e.target.value)}
         size="small"
       >
-        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_2X2}>
+        <MenuItem value={HalftoningFilter.ORDERED_DOT_PLOT_2X2}>
           Ordered dot plot (2x2)
         </MenuItem>
-        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_2X3}>
+        <MenuItem value={HalftoningFilter.ORDERED_DOT_PLOT_2X3}>
           Ordered dot plot (2x3)
         </MenuItem>
-        <MenuItem value={HalftoningFilters.ORDERED_DOT_PLOT_3X3}>
+        <MenuItem value={HalftoningFilter.ORDERED_DOT_PLOT_3X3}>
           Ordered dot plot (3x3)
         </MenuItem>
-        <MenuItem value={HalftoningFilters.FLOYD_STEINBERG}>
+        <MenuItem value={HalftoningFilter.FLOYD_STEINBERG}>
           Floyd & Steinberg
         </MenuItem>
-        <MenuItem value={HalftoningFilters.ROGERS}>Rogers</MenuItem>
-        <MenuItem value={HalftoningFilters.JARVIS_JUDICE_NINKE}>
+        <MenuItem value={HalftoningFilter.ROGERS}>Rogers</MenuItem>
+        <MenuItem value={HalftoningFilter.JARVIS_JUDICE_NINKE}>
           Jarvis, Judice & Ninke
         </MenuItem>
-        <MenuItem value={HalftoningFilters.STUCKI}>Stucki</MenuItem>
-        <MenuItem value={HalftoningFilters.STEVENSONE_ARCE}>
+        <MenuItem value={HalftoningFilter.STUCKI}>Stucki</MenuItem>
+        <MenuItem value={HalftoningFilter.STEVENSONE_ARCE}>
           Stevensone Arce
         </MenuItem>
       </Select>
     </FormControl>
+  );
+
+  const renderDotDetectionInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        placeholder="Threshold"
+        value={dotDetectionFactor}
+        onChange={(e) => setDotDetectionFactor(e.target.value)}
+      />
+    </>
   );
 
   const firstUnitySideBar = (
@@ -1088,6 +1147,167 @@ export const SideBar = (props: SideBarProps) => {
                   executeHalftoningFilterOperation();
                 }
               }}
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setDotDetectionOpen(!dotDetectionOpen)}>
+          <ListItemIcon>
+            <WorkspacesIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dot detection" />
+          {dotDetectionOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={dotDetectionOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            {renderDotDetectionInput}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+              onClick={executeDotDetectionOperation}
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => setLineDetectionOpen(!lineDetectionOpen)}
+        >
+          <ListItemIcon>
+            <GridGoldenratioIcon />
+          </ListItemIcon>
+          <ListItemText primary="Line detection" />
+          {lineDetectionOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={lineDetectionOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={lineDetectionSelected}
+                onChange={(e) => setLineDetectionSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value={LineDetectionFilter.HORIZONTAL}>
+                  Horizontal
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.VERTICAL}>
+                  Vertical
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_45}>45°</MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_135}>
+                  135°
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+              onClick={executeLineDetectionOperation}
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => setBorderDetectionOpen(!borderDetectionOpen)}
+        >
+          <ListItemIcon>
+            <BorderStyleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Border detection" />
+          {borderDetectionOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={borderDetectionOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={borderDetectionSelected}
+                onChange={(e) => setBorderDetectionSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value={BorderDetectionFilter.ROBERTS}>
+                  Roberts
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.CROSSED_ROBERTS}>
+                  Crossed Roberts
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.PREWIIT_GX}>
+                  Prewiit Gx
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.PREWIIT_GY}>
+                  Prewiit Gy
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.MAGNITUDE_PREWIITE}>
+                  Magnitude Prewiit
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.SOBEL_GX}>
+                  Sobel Gx
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.SOBEL_GY}>
+                  Sobel Gy
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.MAGNITUDE_SOBEL}>
+                  Magnitude Sobel
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.KRISH}>Krish</MenuItem>
+                <MenuItem value={BorderDetectionFilter.ROBINSON}>
+                  Robinson
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.FREY_CHEN}>
+                  Frey-Chen
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.LAPLACIAN_H1}>
+                  H1 Laplacian
+                </MenuItem>
+                <MenuItem value={BorderDetectionFilter.LAPLACIAN_H2}>
+                  H2 Laplacian
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+              onClick={executeBorderDetectionOperation}
             >
               Apply operation
             </Button>
