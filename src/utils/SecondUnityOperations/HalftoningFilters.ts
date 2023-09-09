@@ -122,7 +122,73 @@ const orderedDotPlot2x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
 const orderedDotPlot3x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
   applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image);
 
-const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {};
+const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  if (!ctx) {
+    throw new Error("Canvas 2D context is not supported.");
+  }
+
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  ctx.drawImage(image, 0, 0, image.width, image.height);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+
+  const matriz = [
+    [1, 0, 7 / 16],
+    [-1, 1, 3 / 16],
+    [0, 1, 5 / 16],
+    [1, 1, 1 / 16]
+  ];
+
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) {
+      const pixel = getPixelIndex(x, y, image.width);
+      const oldR = imgData.data[pixel];
+      const oldG = imgData.data[pixel + 1];
+      const oldB = imgData.data[pixel + 2];
+
+      const newR = oldR < 128 ? 0 : 255;
+      const newG = oldG < 128 ? 0 : 255;
+      const newB = oldB < 128 ? 0 : 255;
+
+      imgData.data[pixel] = newR;
+      imgData.data[pixel + 1] = newG;
+      imgData.data[pixel + 2] = newB;
+      imgData.data[pixel + 3] = 255;
+
+      const erroR = oldR - newR;
+      const erroG = oldG - newG;
+      const erroB = oldB - newB;
+
+      for (const [dx, dy, factor] of matriz) {
+        const newX = x + dx;
+        const newY = y + dy;
+
+        if (newX >= 0 && newX < image.width && newY >= 0 && newY < image.height) {
+          const newPixelOffset = getPixelIndex(newX, newY, image.width);
+
+          imgData.data[newPixelOffset] = Math.min(255, Math.max(0, imgData.data[newPixelOffset] + erroR * factor));
+          imgData.data[newPixelOffset + 1] = Math.min(255, Math.max(0, imgData.data[newPixelOffset + 1] + erroG * factor));
+          imgData.data[newPixelOffset + 2] = Math.min(255, Math.max(0, imgData.data[newPixelOffset + 2] + erroB * factor));
+          imgData.data[newPixelOffset + 3] = 255;
+        }
+      }
+    }
+  }
+
+  canvas.width = image.width;
+  canvas.height = image.height;
+  ctx.putImageData(imgData, 0, 0);
+
+  return canvas;
+};
+
+function getPixelIndex(x: number, y: number, width: number): number {
+  return (y * width + x) * 4;
+}
 
 const rogers = (image: HTMLCanvasElement): HTMLCanvasElement => {};
 
