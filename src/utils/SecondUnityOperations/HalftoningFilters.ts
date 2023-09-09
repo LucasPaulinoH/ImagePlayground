@@ -17,19 +17,28 @@ export const executeHalftoning = (
       resultingImageCanvas = orderedDotPlot3x3(image);
       break;
     case HalftoningFilter.FLOYD_STEINBERG:
-      resultingImageCanvas = nonDitheringHalftoning(image, FLOY_STEINBERG_MATRIX);
+      resultingImageCanvas = nonDitheringHalftoning(
+        image,
+        FLOY_STEINBERG_MATRIX
+      );
       break;
     case HalftoningFilter.ROGERS:
       resultingImageCanvas = nonDitheringHalftoning(image, ROGERS_MATRIX);
       break;
     case HalftoningFilter.JARVIS_JUDICE_NINKE:
-      resultingImageCanvas = nonDitheringHalftoning(image, JARVIS_JUDICE_NINKE_MATRIX);
+      resultingImageCanvas = nonDitheringHalftoning(
+        image,
+        JARVIS_JUDICE_NINKE_MATRIX
+      );
       break;
     case HalftoningFilter.STUCKI:
       resultingImageCanvas = nonDitheringHalftoning(image, STUCKI_MATRIX);
       break;
     case HalftoningFilter.STEVENSONE_ARCE:
-      resultingImageCanvas = nonDitheringHalftoning(image, STEVENSON_ARCE_MATRIX);
+      resultingImageCanvas = nonDitheringHalftoning(
+        image,
+        STEVENSON_ARCE_MATRIX
+      );
       break;
     default:
       console.warn("Invalid halftoning filter selected.");
@@ -78,7 +87,7 @@ const JARVIS_JUDICE_NINKE_MATRIX = [
   [-1, 2, 3 / 48],
   [0, 2, 5 / 48],
   [1, 2, 3 / 48],
-  [2, 2, 1 / 48]
+  [2, 2, 1 / 48],
 ];
 
 const STUCKI_MATRIX = [
@@ -93,7 +102,7 @@ const STUCKI_MATRIX = [
   [-1, 2, 2 / 42],
   [0, 2, 4 / 42],
   [1, 2, 2 / 42],
-  [2, 2, 1 / 42]
+  [2, 2, 1 / 42],
 ];
 
 const STEVENSON_ARCE_MATRIX = [
@@ -108,7 +117,7 @@ const STEVENSON_ARCE_MATRIX = [
   [-3, 3, 5 / 200],
   [-1, 3, 12 / 200],
   [1, 3, 12 / 200],
-  [3, 3, 5 / 200]
+  [3, 3, 5 / 200],
 ];
 
 const applyOrderedDotPlot = (
@@ -151,7 +160,7 @@ const orderedDotPlot2x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
   applyOrderedDotPlot(ORDERED_DOT_PLOT_2x3_MATRIX, image);
 
 const orderedDotPlot3x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
-  applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image)
+  applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image);
 
 const nonDitheringHalftoning = (
   image: HTMLCanvasElement,
