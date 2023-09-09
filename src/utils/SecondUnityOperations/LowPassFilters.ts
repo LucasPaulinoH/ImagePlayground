@@ -327,10 +327,466 @@ const mode = (
   return newCanvas;
 };
 
-const kawahara = (image: HTMLCanvasElement) => {};
+const kawahara = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-const tomiraAndTsuji = (image: HTMLCanvasElement) => {};
+  if (!ctx) {
+    throw new Error("Canvas 2D context is not supported.");
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+
+  ctx.drawImage(image, 0, 0, image.width, image.height);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+
+  const newImgData = new ImageData(image.width - 2, image.height - 2);
+  const reds = [];
+  const greens = [];
+  const blues = [];
+
+  for (let y = 2; y <= image.height - 1; y++) {
+    for (let x = 2; x <= image.width - 1; x++) {
+      const v0 = getPixelIndex(x - 2, y - 2, image.width);
+      const v1 = getPixelIndex(x - 1, y - 2, image.width);
+      const v2 = getPixelIndex(x, y - 2, image.width);
+      const v3 = getPixelIndex(x + 1, y - 2, image.width);
+      const v4 = getPixelIndex(x + 2, y - 2, image.width);
+      const v5 = getPixelIndex(x - 2, y - 1, image.width);
+      const v6 = getPixelIndex(x - 1, y - 1, image.width);
+      const v7 = getPixelIndex(x, y - 1, image.width);
+      const v8 = getPixelIndex(x + 1, y - 1, image.width);
+      const v9 = getPixelIndex(x + 2, y - 1, image.width);
+      const v10 = getPixelIndex(x - 2, y, image.width);
+      const v11 = getPixelIndex(x - 1, y, image.width);
+      const pixel = getPixelIndex(x, y, image.width);
+      const v13 = getPixelIndex(x + 1, y, image.width);
+      const v14 = getPixelIndex(x + 2, y, image.width);
+      const v15 = getPixelIndex(x - 2, y + 1, image.width);
+      const v16 = getPixelIndex(x - 1, y + 1, image.width);
+      const v17 = getPixelIndex(x, y + 1, image.width);
+      const v18 = getPixelIndex(x + 1, y + 1, image.width);
+      const v19 = getPixelIndex(x + 2, y + 1, image.width);
+      const v20 = getPixelIndex(x - 2, y + 2, image.width);
+      const v21 = getPixelIndex(x - 1, y + 2, image.width);
+      const v22 = getPixelIndex(x, y + 2, image.width);
+      const v23 = getPixelIndex(x + 1, y + 2, image.width);
+      const v24 = getPixelIndex(x + 2, y + 2, image.width);
+
+      const red1 = [
+        imgData.data[v0],
+        imgData.data[v1],
+        imgData.data[v2],
+        imgData.data[v5],
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[pixel],
+      ];
+
+      const red2 = [
+        imgData.data[v2],
+        imgData.data[v3],
+        imgData.data[v4],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v9],
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v14],
+      ];
+
+      const red3 = [
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[pixel],
+        imgData.data[v15],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v20],
+        imgData.data[v21],
+        imgData.data[v22],
+      ];
+
+      const red4 = [
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v14],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[v19],
+        imgData.data[v22],
+        imgData.data[v23],
+        imgData.data[v24],
+      ];
+
+      const mediasR = [
+        calculateAverage(red1),
+        calculateAverage(red2),
+        calculateAverage(red3),
+        calculateAverage(red4),
+      ];
+
+      const varianciasR = [
+        calculateVariance(red1),
+        calculateVariance(red2),
+        calculateVariance(red3),
+        calculateVariance(red4),
+      ];
+
+      const kuwaR = mediasR[calculateMinimalVariance(varianciasR)];
+
+      // Médias de Green
+      const green1 = [
+        imgData.data[v0 + 1],
+        imgData.data[v1 + 1],
+        imgData.data[v2 + 1],
+        imgData.data[v5 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green2 = [
+        imgData.data[v2 + 1],
+        imgData.data[v3 + 1],
+        imgData.data[v4 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v9 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+      ];
+
+      const green3 = [
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v15 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v20 + 1],
+        imgData.data[v21 + 1],
+        imgData.data[v22 + 1],
+      ];
+
+      const green4 = [
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v19 + 1],
+        imgData.data[v22 + 1],
+        imgData.data[v23 + 1],
+        imgData.data[v24 + 1],
+      ];
+
+      const mediasG = [
+        calculateAverage(green1),
+        calculateAverage(green2),
+        calculateAverage(green3),
+        calculateAverage(green4),
+      ];
+
+      const varianciasG = [
+        calculateVariance(green1),
+        calculateVariance(green2),
+        calculateVariance(green3),
+        calculateVariance(green4),
+      ];
+
+      const kuwaG = mediasG[calculateMinimalVariance(varianciasG)];
+
+      // Médias de Blue
+      const blue1 = [
+        imgData.data[v0 + 2],
+        imgData.data[v1 + 2],
+        imgData.data[v2 + 2],
+        imgData.data[v5 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue2 = [
+        imgData.data[v2 + 2],
+        imgData.data[v3 + 2],
+        imgData.data[v4 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v9 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+      ];
+
+      const blue3 = [
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v15 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v20 + 2],
+        imgData.data[v21 + 2],
+        imgData.data[v22 + 2],
+      ];
+
+      const blue4 = [
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v19 + 2],
+        imgData.data[v22 + 2],
+        imgData.data[v23 + 2],
+        imgData.data[v24 + 2],
+      ];
+
+      const mediasB = [
+        calculateAverage(blue1),
+        calculateAverage(blue2),
+        calculateAverage(blue3),
+        calculateAverage(blue4),
+      ];
+
+      const varianciasB = [
+        calculateVariance(blue1),
+        calculateVariance(blue2),
+        calculateVariance(blue3),
+        calculateVariance(blue4),
+      ];
+
+      const kuwaB = mediasB[calculateMinimalVariance(varianciasB)];
+
+      reds.push(kuwaR);
+      greens.push(kuwaG);
+      blues.push(kuwaB);
+    }
+  }
+
+  let j = 0;
+  for (let i = 0; i < newImgData.data.length; i += 4) {
+    newImgData.data[i] = reds[j];
+    newImgData.data[i + 1] = greens[j];
+    newImgData.data[i + 2] = blues[j];
+    newImgData.data[i + 3] = 255;
+    j++;
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+  ctx.putImageData(newImgData, 0, 0);
+
+  return canvas;
+};
+
+const tomiraAndTsuji = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Canvas context not supported.');
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  const newImgData = new ImageData(canvas.width, canvas.height);
+  const reds: number[] = [];
+  const greens: number[] = [];
+  const blues: number[] = [];
+
+  function calcularMinimoVariancia(valores: number[]): number {
+    let min = valores[0];
+    let pos = 0;
+    for (let i = 1; i < valores.length; i++) {
+      if (valores[i] < min) {
+        min = valores[i];
+        pos = i;
+      }
+    }
+    return pos;
+  }
+
+  function calcularVariancia(valores: number[]): number {
+    let somatorio = 0;
+    const media = calcularMedia(valores);
+    for (let i = 0; i < valores.length; i++) {
+      somatorio += Math.pow(valores[i] - media, 2);
+    }
+    return somatorio / valores.length;
+  }
+
+  function calcularMedia(valores: number[]): number {
+    let soma = 0;
+    for (let i = 0; i < valores.length; i++) {
+      soma += valores[i];
+    }
+    return soma / 9;
+  }
+
+  function getPixelIndex(x: number, y: number): number {
+    return (y * imgData.width + x) * 4;
+  }
+
+  for (let y = 2; y <= imgData.height - 1; y++) {
+    for (let x = 2; x <= imgData.width - 1; x++) {
+      const v0 = getPixelIndex(x - 2, y - 2);
+      const v1 = getPixelIndex(x - 1, y - 2);
+      const v2 = getPixelIndex(x, y - 2);
+      const v3 = getPixelIndex(x + 1, y - 2);
+      const v4 = getPixelIndex(x + 2, y - 2);
+      const v5 = getPixelIndex(x - 2, y - 1);
+      const v6 = getPixelIndex(x - 1, y - 1);
+      const v7 = getPixelIndex(x, y - 1);
+      const v8 = getPixelIndex(x + 1, y - 1);
+      const v9 = getPixelIndex(x + 2, y - 1);
+      const v10 = getPixelIndex(x - 2, y);
+      const v11 = getPixelIndex(x - 1, y);
+      const pixel = getPixelIndex(x, y);
+      const v13 = getPixelIndex(x + 1, y);
+      const v14 = getPixelIndex(x + 2, y);
+      const v15 = getPixelIndex(x - 2, y + 1);
+      const v16 = getPixelIndex(x - 1, y + 1);
+      const v17 = getPixelIndex(x, y + 1);
+      const v18 = getPixelIndex(x + 1, y + 1);
+      const v19 = getPixelIndex(x + 2, y + 1);
+      const v20 = getPixelIndex(x - 2, y + 2);
+      const v21 = getPixelIndex(x - 1, y + 2);
+      const v22 = getPixelIndex(x, y + 2);
+      const v23 = getPixelIndex(x + 1, y + 2);
+      const v24 = getPixelIndex(x + 2, y + 2);
+
+      // Médias de R
+      const red1 = [imgData.data[v0], imgData.data[v1], imgData.data[v2], imgData.data[v5],
+        imgData.data[v6], imgData.data[v7], imgData.data[v10], imgData.data[v11], imgData.data[pixel]];
+
+      const red2 = [imgData.data[v2], imgData.data[v3], imgData.data[v4], imgData.data[v7],
+        imgData.data[v8], imgData.data[v9], imgData.data[pixel], imgData.data[v13], imgData.data[v14]];
+
+      const red3 = [imgData.data[v10], imgData.data[v11], imgData.data[pixel], imgData.data[v15],
+        imgData.data[v16], imgData.data[v17], imgData.data[v20], imgData.data[v21], imgData.data[v22]];
+
+      const red4 = [imgData.data[pixel], imgData.data[v13], imgData.data[v14], imgData.data[v17],
+        imgData.data[v18], imgData.data[v19], imgData.data[v22], imgData.data[v23], imgData.data[v24]];
+
+      const red5 = [imgData.data[v6], imgData.data[v7], imgData.data[v8], imgData.data[v11],
+        imgData.data[pixel], imgData.data[v13], imgData.data[v16], imgData.data[v17], imgData.data[v18]];
+
+      const mediasR = [calcularMedia(red1), calcularMedia(red2), calcularMedia(red3), calcularMedia(red4), calcularMedia(red5)];
+
+      const varianciasR = [calcularVariancia(red1), calcularVariancia(red2), calcularVariancia(red3), calcularVariancia(red4), calcularVariancia(red5)];
+      const kuwaR = mediasR[calcularMinimoVariancia(varianciasR)];
+
+      // Médias de Green
+      const green1 = [imgData.data[v0 + 1], imgData.data[v1 + 1], imgData.data[v2 + 1], imgData.data[v5 + 1],
+        imgData.data[v6 + 1], imgData.data[v7 + 1], imgData.data[v10 + 1], imgData.data[v11 + 1], imgData.data[pixel + 1]];
+
+      const green2 = [imgData.data[v2 + 1], imgData.data[v3 + 1], imgData.data[v4 + 1], imgData.data[v7 + 1],
+        imgData.data[v8 + 1], imgData.data[v9 + 1], imgData.data[pixel + 1], imgData.data[v13 + 1], imgData.data[v14 + 1]];
+
+      const green3 = [imgData.data[v10 + 1], imgData.data[v11 + 1], imgData.data[pixel + 1], imgData.data[v15 + 1],
+        imgData.data[v16 + 1], imgData.data[v17 + 1], imgData.data[v20 + 1], imgData.data[v21 + 1], imgData.data[v22 + 1]];
+
+      const green4 = [imgData.data[pixel + 1], imgData.data[v13 + 1], imgData.data[v14 + 1], imgData.data[v17 + 1],
+        imgData.data[v18 + 1], imgData.data[v19 + 1], imgData.data[v22 + 1], imgData.data[v23 + 1], imgData.data[v24 + 1]];
+
+      const green5 = [imgData.data[v6 + 1], imgData.data[v7 + 1], imgData.data[v8 + 1], imgData.data[v11 + 1],
+        imgData.data[pixel + 1], imgData.data[v13 + 1], imgData.data[v16 + 1], imgData.data[v17 + 1], imgData.data[v18 + 1]];
+
+      const mediasG = [calcularMedia(green1), calcularMedia(green2), calcularMedia(green3), calcularMedia(green4), calcularMedia(green5)];
+
+      const varianciasG = [calcularVariancia(green1), calcularVariancia(green2), calcularVariancia(green3), calcularVariancia(green4), calcularVariancia(green5)];
+      const kuwaG = mediasG[calcularMinimoVariancia(varianciasG)];
+
+      // Médias de Blue
+      const blue1 = [imgData.data[v0 + 2], imgData.data[v1 + 2], imgData.data[v2 + 2], imgData.data[v5 + 2],
+        imgData.data[v6 + 2], imgData.data[v7 + 2], imgData.data[v10 + 2], imgData.data[v11 + 2], imgData.data[pixel + 2]];
+
+      const blue2 = [imgData.data[v2 + 2], imgData.data[v3 + 2], imgData.data[v4 + 2], imgData.data[v7 + 2],
+        imgData.data[v8 + 2], imgData.data[v9 + 2], imgData.data[pixel + 2], imgData.data[v13 + 2], imgData.data[v14 + 2]];
+
+      const blue3 = [imgData.data[v10 + 2], imgData.data[v11 + 2], imgData.data[pixel + 2], imgData.data[v15 + 2],
+        imgData.data[v16 + 2], imgData.data[v17 + 2], imgData.data[v20 + 2], imgData.data[v21 + 2], imgData.data[v22 + 2]];
+
+      const blue4 = [imgData.data[pixel + 2], imgData.data[v13 + 2], imgData.data[v14 + 2], imgData.data[v17 + 2],
+        imgData.data[v18 + 2], imgData.data[v19 + 2], imgData.data[v22 + 2], imgData.data[v23 + 2], imgData.data[v24 + 2]];
+
+      const blue5 = [imgData.data[v6 + 2], imgData.data[v7 + 2], imgData.data[v8 + 2], imgData.data[v11 + 2],
+        imgData.data[pixel + 2], imgData.data[v13 + 2], imgData.data[v16 + 2], imgData.data[v17 + 2], imgData.data[v18 + 2]];
+
+      const mediasB = [calcularMedia(blue1), calcularMedia(blue2), calcularMedia(blue3), calcularMedia(blue4), calcularMedia(blue5)];
+
+      const varianciasB = [calcularVariancia(blue1), calcularVariancia(blue2), calcularVariancia(blue3), calcularVariancia(blue4), calcularVariancia(blue5)];
+      const kuwaB = mediasB[calcularMinimoVariancia(varianciasB)];
+
+      reds.push(kuwaR);
+      greens.push(kuwaG);
+      blues.push(kuwaB);
+    }
+  }
+
+  let j = 0;
+  for (let i = 0; i < newImgData.data.length; i += 4) {
+    newImgData.data[i] = reds[j];
+    newImgData.data[i + 1] = greens[j];
+    newImgData.data[i + 2] = blues[j];
+    newImgData.data[i + 3] = 255;
+    j++;
+  }
+
+  canvas.width = newImgData.width;
+  canvas.height = newImgData.height;
+  ctx.putImageData(newImgData, 0, 0);
+
+  return canvas;
+};
 
 const nagaoeMatsuyama = (image: HTMLCanvasElement) => {};
 
 const Somboonkaew = (image: HTMLCanvasElement) => {};
+
+function calculateMinimalVariance(values: number[]): number {
+  let min = values[0];
+  let pos = 0;
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] < min) {
+      min = values[i];
+      pos = i;
+    }
+  }
+  return pos;
+}
+
+function calculateVariance(values: number[]): number {
+  let sumation = 0;
+  const average = calculateAverage(values);
+  for (let i = 0; i < values.length; i++) {
+    sumation += Math.pow(values[i] - average, 2);
+  }
+  return sumation / values.length;
+}
+
+function calculateAverage(values: number[]): number {
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) {
+    sum += values[i];
+  }
+  return sum / 9;
+}
+
+function getPixelIndex(x: number, y: number, width: number): number {
+  return (y * width + x) * 4;
+}
