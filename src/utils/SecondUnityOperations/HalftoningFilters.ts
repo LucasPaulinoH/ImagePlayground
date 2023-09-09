@@ -17,19 +17,19 @@ export const executeHalftoning = (
       resultingImageCanvas = orderedDotPlot3x3(image);
       break;
     case HalftoningFilter.FLOYD_STEINBERG:
-      resultingImageCanvas = floydAndSteinberg(image);
+      resultingImageCanvas = nonDitheringHalftoning(image, FLOY_STEINBERG_MATRIX);
       break;
     case HalftoningFilter.ROGERS:
-      resultingImageCanvas = rogers(image);
+      resultingImageCanvas = nonDitheringHalftoning(image, ROGERS_MATRIX);
       break;
     case HalftoningFilter.JARVIS_JUDICE_NINKE:
-      resultingImageCanvas = jarvisJudiceAndNinke(image);
+      resultingImageCanvas = nonDitheringHalftoning(image, JARVIS_JUDICE_NINKE_MATRIX);
       break;
     case HalftoningFilter.STUCKI:
-      resultingImageCanvas = stucki(image);
+      resultingImageCanvas = nonDitheringHalftoning(image, STUCKI_MATRIX);
       break;
     case HalftoningFilter.STEVENSONE_ARCE:
-      resultingImageCanvas = stevensoneArce(image);
+      resultingImageCanvas = nonDitheringHalftoning(image, STEVENSON_ARCE_MATRIX);
       break;
     default:
       console.warn("Invalid halftoning filter selected.");
@@ -54,30 +54,61 @@ const ORDERED_DOT_PLOT_3x3_MATRIX = [
   [5, 2, 7],
 ];
 
-const FLOYD_STEINBERG_MATRIX = [
-  [0, 0, 7],
-  [3, 5, 1],
+const FLOY_STEINBERG_MATRIX = [
+  [1, 0, 7 / 16],
+  [-1, 1, 3 / 16],
+  [0, 1, 5 / 16],
+  [1, 1, 1 / 16],
 ];
-const ROGERS = [
-  [0, 1, 0],
-  [1, 1, 1],
-  [0, 1, 0],
+const ROGERS_MATRIX = [
+  [1, 0, 3 / 8],
+  [0, 1, 3 / 8],
+  [1, 1, 2 / 8],
 ];
-const JARVIS_JUDICE_NINKE = [
-  [0, 0, 0, 7, 5],
-  [3, 5, 7, 5, 3],
-  [1, 3, 5, 3, 1],
+
+const JARVIS_JUDICE_NINKE_MATRIX = [
+  [1, 0, 7 / 48],
+  [2, 0, 5 / 48],
+  [-2, 1, 3 / 48],
+  [-1, 1, 5 / 48],
+  [0, 1, 7 / 48],
+  [1, 1, 5 / 48],
+  [2, 1, 3 / 48],
+  [-2, 2, 1 / 48],
+  [-1, 2, 3 / 48],
+  [0, 2, 5 / 48],
+  [1, 2, 3 / 48],
+  [2, 2, 1 / 48]
 ];
-const STUCKI = [
-  [0, 0, 0, 8, 4],
-  [2, 4, 8, 4, 2],
-  [1, 2, 4, 2, 1],
+
+const STUCKI_MATRIX = [
+  [1, 0, 8 / 42],
+  [2, 0, 4 / 42],
+  [-2, 1, 2 / 42],
+  [-1, 1, 4 / 42],
+  [0, 1, 8 / 42],
+  [1, 1, 4 / 42],
+  [2, 1, 2 / 42],
+  [-2, 2, 1 / 42],
+  [-1, 2, 2 / 42],
+  [0, 2, 4 / 42],
+  [1, 2, 2 / 42],
+  [2, 2, 1 / 42]
 ];
-const STEVENSONE_ARCE = [
-  [0, 0, 0, 32, 0, 0],
-  [12, 0, 26, 0, 30, 0],
-  [0, 12, 0, 26, 0, 12],
-  [5, 0, 12, 0, 12, 0],
+
+const STEVENSON_ARCE_MATRIX = [
+  [2, 0, 32 / 200],
+  [-3, 1, 12 / 200],
+  [-1, 1, 26 / 200],
+  [1, 1, 30 / 200],
+  [3, 1, 16 / 200],
+  [-2, 2, 12 / 200],
+  [0, 2, 26 / 200],
+  [2, 2, 12 / 200],
+  [-3, 3, 5 / 200],
+  [-1, 3, 12 / 200],
+  [1, 3, 12 / 200],
+  [3, 3, 5 / 200]
 ];
 
 const applyOrderedDotPlot = (
@@ -120,12 +151,15 @@ const orderedDotPlot2x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
   applyOrderedDotPlot(ORDERED_DOT_PLOT_2x3_MATRIX, image);
 
 const orderedDotPlot3x3 = (image: HTMLCanvasElement): HTMLCanvasElement =>
-  applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image);
+  applyOrderedDotPlot(ORDERED_DOT_PLOT_3x3_MATRIX, image)
 
-const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  
+const nonDitheringHalftoning = (
+  image: HTMLCanvasElement,
+  matrix: number[][]
+): HTMLCanvasElement => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
   if (!ctx) {
     throw new Error("Canvas 2D context is not supported.");
   }
@@ -135,13 +169,6 @@ const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
 
   ctx.drawImage(image, 0, 0, image.width, image.height);
   const imgData = ctx.getImageData(0, 0, image.width, image.height);
-
-  const matriz = [
-    [1, 0, 7 / 16],
-    [-1, 1, 3 / 16],
-    [0, 1, 5 / 16],
-    [1, 1, 1 / 16]
-  ];
 
   for (let y = 0; y < image.height; y++) {
     for (let x = 0; x < image.width; x++) {
@@ -163,16 +190,30 @@ const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
       const erroG = oldG - newG;
       const erroB = oldB - newB;
 
-      for (const [dx, dy, factor] of matriz) {
+      for (const [dx, dy, factor] of matrix) {
         const newX = x + dx;
         const newY = y + dy;
 
-        if (newX >= 0 && newX < image.width && newY >= 0 && newY < image.height) {
+        if (
+          newX >= 0 &&
+          newX < image.width &&
+          newY >= 0 &&
+          newY < image.height
+        ) {
           const newPixelOffset = getPixelIndex(newX, newY, image.width);
 
-          imgData.data[newPixelOffset] = Math.min(255, Math.max(0, imgData.data[newPixelOffset] + erroR * factor));
-          imgData.data[newPixelOffset + 1] = Math.min(255, Math.max(0, imgData.data[newPixelOffset + 1] + erroG * factor));
-          imgData.data[newPixelOffset + 2] = Math.min(255, Math.max(0, imgData.data[newPixelOffset + 2] + erroB * factor));
+          imgData.data[newPixelOffset] = Math.min(
+            255,
+            Math.max(0, imgData.data[newPixelOffset] + erroR * factor)
+          );
+          imgData.data[newPixelOffset + 1] = Math.min(
+            255,
+            Math.max(0, imgData.data[newPixelOffset + 1] + erroG * factor)
+          );
+          imgData.data[newPixelOffset + 2] = Math.min(
+            255,
+            Math.max(0, imgData.data[newPixelOffset + 2] + erroB * factor)
+          );
           imgData.data[newPixelOffset + 3] = 255;
         }
       }
@@ -186,20 +227,6 @@ const floydAndSteinberg = (image: HTMLCanvasElement): HTMLCanvasElement => {
   return canvas;
 };
 
-function getPixelIndex(x: number, y: number, width: number): number {
-  return (y * width + x) * 4;
-}
-
-const rogers = (image: HTMLCanvasElement): HTMLCanvasElement => {};
-
-const jarvisJudiceAndNinke = (
-  image: HTMLCanvasElement
-): HTMLCanvasElement => {};
-
-const stucki = (image: HTMLCanvasElement): HTMLCanvasElement => {};
-
-const stevensoneArce = (image: HTMLCanvasElement): HTMLCanvasElement => {};
-
 function createCanvasFromImage(image: HTMLCanvasElement): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = image.width;
@@ -209,4 +236,8 @@ function createCanvasFromImage(image: HTMLCanvasElement): HTMLCanvasElement {
     ctx.drawImage(image, 0, 0);
   }
   return canvas;
+}
+
+function getPixelIndex(x: number, y: number, width: number): number {
+  return (y * width + x) * 4;
 }
