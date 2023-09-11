@@ -26,7 +26,7 @@ export const executeHighPassFilter = (
       resultingImageCanvas = highPassFilter(image, m3Mask);
       break;
     case HighPassFilter.HIGH_BOOST:
-      resultingImageCanvas = highBoost(image, 1);
+      resultingImageCanvas = highBoost(image, factor);
       break;
     default:
       break;

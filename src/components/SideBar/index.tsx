@@ -73,7 +73,7 @@ import BorderStyleIcon from "@mui/icons-material/BorderStyle";
 import { executeBorderDetection } from "../../utils/SecondUnityOperations/BorderDetection";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import { executeDotDetection } from "../../utils/SecondUnityOperations/DotDetection";
-import GridGoldenratioIcon from '@mui/icons-material/GridGoldenratio';
+import GridGoldenratioIcon from "@mui/icons-material/GridGoldenratio";
 import { executeLineDetection } from "../../utils/SecondUnityOperations/LineDetection";
 
 const drawerWidth = 240;
@@ -159,6 +159,7 @@ export const SideBar = (props: SideBarProps) => {
   const [gamaOrEqSelected, setGamaOrEqSelected] = useState<string>("GAMA");
 
   const [bitSlicingFactor, setBitSlicingFactor] = useState<number>(1);
+  const [highBoostFactor, setHighBoostFactor] = useState<number>(1);
   const [dotDetectionFactor, setDotDetectionFactor] = useState<number>();
 
   const [selectedUnity, setSelectedUnity] = useState<number>(1);
@@ -337,7 +338,8 @@ export const SideBar = (props: SideBarProps) => {
     if (props.images.length > 0) {
       const operationResult: HTMLCanvasElement = executeHighPassFilter(
         props.selectedImages[0],
-        highPassFilterSelected
+        highPassFilterSelected,
+        highBoostFactor
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -588,6 +590,18 @@ export const SideBar = (props: SideBarProps) => {
         <MenuItem value={HighPassFilter.HIGH_BOOST}>High boost</MenuItem>
       </Select>
     </FormControl>
+  );
+
+  const renderHighBoostFactorInput = (
+    <>
+      <TextField
+        size="small"
+        label="Factor"
+        type="number"
+        value={highBoostFactor}
+        onChange={(e) => setHighBoostFactor(e.target.value)}
+      />
+    </>
   );
 
   const renderHalftoningFiltersSelect = (
@@ -1133,6 +1147,9 @@ export const SideBar = (props: SideBarProps) => {
               : filterTypeSelected === "HIGH"
               ? renderHighPassFiltersSelect
               : renderHalftoningFiltersSelect}
+            {highPassFilterSelected == HighPassFilter.HIGH_BOOST
+              ? renderHighBoostFactorInput
+              : null}
             <Button
               variant="contained"
               fullWidth
