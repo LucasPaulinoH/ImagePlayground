@@ -60,7 +60,7 @@ export const generateHistogramFromImage = (imageMatrix: Uint8ClampedArray) => {
 
 export const getPixelIndex = (x: number, y: number, width: number): number => {
   return (y * width + x) * 4;
-}
+};
 
 export const applyMask = (mask: number[], values: number[]): number => {
   let sum = 0;
@@ -68,4 +68,33 @@ export const applyMask = (mask: number[], values: number[]): number => {
     sum += mask[i] * values[i];
   }
   return sum;
-}
+};
+
+export const calculateMinimalVariance = (values: number[]): number => {
+  let min = values[0];
+  let pos = 0;
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] < min) {
+      min = values[i];
+      pos = i;
+    }
+  }
+  return pos;
+};
+
+export const calculateVariance = (values: number[]): number => {
+  let sumation = 0;
+  const average = calculateAverage(values);
+  for (let i = 0; i < values.length; i++) {
+    sumation += Math.pow(values[i] - average, 2);
+  }
+  return sumation / values.length;
+};
+
+export const calculateAverage = (values: number[]): number => {
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) {
+    sum += values[i];
+  }
+  return sum / 9;
+};
