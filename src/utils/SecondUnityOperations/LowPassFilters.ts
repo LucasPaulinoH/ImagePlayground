@@ -896,6 +896,945 @@ const tomiraAndTsuji = (image: HTMLCanvasElement): HTMLCanvasElement => {
   return canvas;
 };
 
-const nagaoeMatsuyama = (image: HTMLCanvasElement) => {};
+const nagaoeMatsuyama = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-const Somboonkaew = (image: HTMLCanvasElement) => {};
+  if (!ctx) {
+    throw new Error("Canvas 2D context is not supported.");
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+
+  ctx.drawImage(image, 0, 0, image.width, image.height);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+
+  const newImgData = new ImageData(image.width - 2, image.height - 2);
+  const reds = [];
+  const greens = [];
+  const blues = [];
+
+  for (let y = 2; y <= image.height - 1; y++) {
+    for (let x = 2; x <= image.width - 1; x++) {
+      const v0 = getPixelIndex(x - 2, y - 2, image.width);
+      const v1 = getPixelIndex(x - 1, y - 2, image.width);
+      const v2 = getPixelIndex(x, y - 2, image.width);
+      const v3 = getPixelIndex(x + 1, y - 2, image.width);
+      const v4 = getPixelIndex(x + 2, y - 2, image.width);
+      const v5 = getPixelIndex(x - 2, y - 1, image.width);
+      const v6 = getPixelIndex(x - 1, y - 1, image.width);
+      const v7 = getPixelIndex(x, y - 1, image.width);
+      const v8 = getPixelIndex(x + 1, y - 1, image.width);
+      const v9 = getPixelIndex(x + 2, y - 1, image.width);
+      const v10 = getPixelIndex(x - 2, y, image.width);
+      const v11 = getPixelIndex(x - 1, y, image.width);
+      const pixel = getPixelIndex(x, y, image.width);
+      const v13 = getPixelIndex(x + 1, y, image.width);
+      const v14 = getPixelIndex(x + 2, y, image.width);
+      const v15 = getPixelIndex(x - 2, y + 1, image.width);
+      const v16 = getPixelIndex(x - 1, y + 1, image.width);
+      const v17 = getPixelIndex(x, y + 1, image.width);
+      const v18 = getPixelIndex(x + 1, y + 1, image.width);
+      const v19 = getPixelIndex(x + 2, y + 1, image.width);
+      const v20 = getPixelIndex(x - 2, y + 2, image.width);
+      const v21 = getPixelIndex(x - 1, y + 2, image.width);
+      const v22 = getPixelIndex(x, y + 2, image.width);
+      const v23 = getPixelIndex(x + 1, y + 2, image.width);
+      const v24 = getPixelIndex(x + 2, y + 2, image.width);
+
+      const red1 = [
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v11],
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v18],
+      ];
+
+      const red2 = [
+        imgData.data[v1],
+        imgData.data[v2],
+        imgData.data[v3],
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[pixel],
+      ];
+
+      const red3 = [
+        imgData.data[v8],
+        imgData.data[v9],
+        imgData.data[v13],
+        imgData.data[v14],
+        imgData.data[v18],
+        imgData.data[v19],
+        imgData.data[pixel],
+      ];
+
+      const red4 = [
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[v21],
+        imgData.data[v22],
+        imgData.data[v23],
+        imgData.data[pixel],
+      ];
+
+      const red5 = [
+        imgData.data[v5],
+        imgData.data[v6],
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[v15],
+        imgData.data[v16],
+        imgData.data[pixel],
+      ];
+
+      const red6 = [
+        imgData.data[v0],
+        imgData.data[v1],
+        imgData.data[v5],
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v11],
+        imgData.data[pixel],
+      ];
+
+      const red7 = [
+        imgData.data[v3],
+        imgData.data[v4],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v9],
+        imgData.data[v13],
+        imgData.data[pixel],
+      ];
+
+      const red8 = [
+        imgData.data[v13],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[v19],
+        imgData.data[v23],
+        imgData.data[v24],
+        imgData.data[pixel],
+      ];
+
+      const red9 = [
+        imgData.data[v11],
+        imgData.data[v15],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v20],
+        imgData.data[v21],
+        imgData.data[pixel],
+      ];
+
+      const rAverages = [
+        calculateAverage(red1),
+        calculateAverage(red2),
+        calculateAverage(red3),
+        calculateAverage(red4),
+        calculateAverage(red5),
+        calculateAverage(red6),
+        calculateAverage(red7),
+        calculateAverage(red8),
+        calculateAverage(red9),
+      ];
+
+      const rVariances = [
+        calculateVariance(red1),
+        calculateVariance(red2),
+        calculateVariance(red3),
+        calculateVariance(red4),
+        calculateVariance(red5),
+        calculateVariance(red6),
+        calculateVariance(red7),
+        calculateVariance(red8),
+        calculateVariance(red9),
+      ];
+
+      const kuwaR = rAverages[calculateMinimalVariance(rVariances)];
+
+      const green1 = [
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+      ];
+
+      const green2 = [
+        imgData.data[v1 + 1],
+        imgData.data[v2 + 1],
+        imgData.data[v3 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green3 = [
+        imgData.data[v8 + 1],
+        imgData.data[v9 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v19 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green4 = [
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v21 + 1],
+        imgData.data[v22 + 1],
+        imgData.data[v23 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green5 = [
+        imgData.data[v5 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v15 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green6 = [
+        imgData.data[v0 + 1],
+        imgData.data[v1 + 1],
+        imgData.data[v5 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green7 = [
+        imgData.data[v3 + 1],
+        imgData.data[v4 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v9 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green8 = [
+        imgData.data[v13 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v19 + 1],
+        imgData.data[v23 + 1],
+        imgData.data[v24 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green9 = [
+        imgData.data[v11 + 1],
+        imgData.data[v15 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v20 + 1],
+        imgData.data[v21 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const gAverages = [
+        calculateAverage(green1),
+        calculateAverage(green2),
+        calculateAverage(green3),
+        calculateAverage(green4),
+        calculateAverage(green5),
+        calculateAverage(green6),
+        calculateAverage(green7),
+        calculateAverage(green8),
+        calculateAverage(green9),
+      ];
+
+      const gVariances = [
+        calculateVariance(green1),
+        calculateVariance(green2),
+        calculateVariance(green3),
+        calculateVariance(green4),
+        calculateVariance(green5),
+        calculateVariance(green6),
+        calculateVariance(green7),
+        calculateVariance(green8),
+        calculateVariance(green9),
+      ];
+      const kuwaG = gAverages[calculateMinimalVariance(gVariances)];
+
+      const blue1 = [
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+      ];
+
+      const blue2 = [
+        imgData.data[v1 + 2],
+        imgData.data[v2 + 2],
+        imgData.data[v3 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue3 = [
+        imgData.data[v8 + 2],
+        imgData.data[v9 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v19 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue4 = [
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v21 + 2],
+        imgData.data[v22 + 2],
+        imgData.data[v23 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue5 = [
+        imgData.data[v5 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v15 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue6 = [
+        imgData.data[v0 + 2],
+        imgData.data[v1 + 2],
+        imgData.data[v5 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue7 = [
+        imgData.data[v3 + 2],
+        imgData.data[v4 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v9 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue8 = [
+        imgData.data[v13 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v19 + 2],
+        imgData.data[v23 + 2],
+        imgData.data[v24 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue9 = [
+        imgData.data[v11 + 2],
+        imgData.data[v15 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v20 + 2],
+        imgData.data[v21 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const bAverages = [
+        calculateAverage(blue1),
+        calculateAverage(blue2),
+        calculateAverage(blue3),
+        calculateAverage(blue4),
+        calculateAverage(blue5),
+        calculateAverage(blue6),
+        calculateAverage(blue7),
+        calculateAverage(blue8),
+        calculateAverage(blue9),
+      ];
+
+      const bVariances = [
+        calculateVariance(blue1),
+        calculateVariance(blue2),
+        calculateVariance(blue3),
+        calculateVariance(blue4),
+        calculateVariance(blue5),
+        calculateVariance(blue6),
+        calculateVariance(blue7),
+        calculateVariance(blue8),
+        calculateVariance(blue9),
+      ];
+      const kuwaB = bAverages[calculateMinimalVariance(bVariances)];
+
+      reds.push(kuwaR);
+      greens.push(kuwaG);
+      blues.push(kuwaB);
+    }
+  }
+
+  let j = 0;
+  for (let i = 0; i < newImgData.data.length; i += 4) {
+    newImgData.data[i] = reds[j];
+    newImgData.data[i + 1] = greens[j];
+    newImgData.data[i + 2] = blues[j];
+    newImgData.data[i + 3] = 255;
+    j++;
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+  ctx.putImageData(newImgData, 0, 0);
+
+  return canvas;
+};
+
+const Somboonkaew = (image: HTMLCanvasElement): HTMLCanvasElement => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    throw new Error("Canvas 2D context is not supported.");
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+
+  ctx.drawImage(image, 0, 0, image.width, image.height);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+
+  const newImgData = new ImageData(image.width - 2, image.height - 2);
+  const reds = [];
+  const greens = [];
+  const blues = [];
+
+  for (let y = 2; y <= image.height - 1; y++) {
+    for (let x = 2; x <= image.width - 1; x++) {
+      const v0 = getPixelIndex(x - 2, y - 2, image.width);
+      const v1 = getPixelIndex(x - 1, y - 2, image.width);
+      const v2 = getPixelIndex(x, y - 2, image.width);
+      const v3 = getPixelIndex(x + 1, y - 2, image.width);
+      const v4 = getPixelIndex(x + 2, y - 2, image.width);
+      const v5 = getPixelIndex(x - 2, y - 1, image.width);
+      const v6 = getPixelIndex(x - 1, y - 1, image.width);
+      const v7 = getPixelIndex(x, y - 1, image.width);
+      const v8 = getPixelIndex(x + 1, y - 1, image.width);
+      const v9 = getPixelIndex(x + 2, y - 1, image.width);
+      const v10 = getPixelIndex(x - 2, y, image.width);
+      const v11 = getPixelIndex(x - 1, y, image.width);
+      const pixel = getPixelIndex(x, y, image.width);
+      const v13 = getPixelIndex(x + 1, y, image.width);
+      const v14 = getPixelIndex(x + 2, y, image.width);
+      const v15 = getPixelIndex(x - 2, y + 1, image.width);
+      const v16 = getPixelIndex(x - 1, y + 1, image.width);
+      const v17 = getPixelIndex(x, y + 1, image.width);
+      const v18 = getPixelIndex(x + 1, y + 1, image.width);
+      const v19 = getPixelIndex(x + 2, y + 1, image.width);
+      const v20 = getPixelIndex(x - 2, y + 2, image.width);
+      const v21 = getPixelIndex(x - 1, y + 2, image.width);
+      const v22 = getPixelIndex(x, y + 2, image.width);
+      const v23 = getPixelIndex(x + 1, y + 2, image.width);
+      const v24 = getPixelIndex(x + 2, y + 2, image.width);
+
+      const red1 = [
+        imgData.data[v0],
+        imgData.data[v6],
+        imgData.data[v18],
+        imgData.data[v24],
+        imgData.data[v16],
+        imgData.data[v8],
+        imgData.data[pixel],
+      ];
+
+      const red2 = [
+        imgData.data[v4],
+        imgData.data[v8],
+        imgData.data[v16],
+        imgData.data[v20],
+        imgData.data[v6],
+        imgData.data[v18],
+        imgData.data[pixel],
+      ];
+
+      const red3 = [
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[v13],
+        imgData.data[v14],
+        imgData.data[v7],
+        imgData.data[v17],
+        imgData.data[pixel],
+      ];
+
+      const red4 = [
+        imgData.data[v2],
+        imgData.data[v7],
+        imgData.data[v17],
+        imgData.data[v22],
+        imgData.data[v11],
+        imgData.data[v13],
+        imgData.data[pixel],
+      ];
+
+      const red5 = [
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[pixel],
+      ];
+
+      const red6 = [
+        imgData.data[v6],
+        imgData.data[v11],
+        imgData.data[v16],
+        imgData.data[v8],
+        imgData.data[v13],
+        imgData.data[v18],
+        imgData.data[pixel],
+      ];
+
+      const red7 = [
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v11],
+        imgData.data[v13],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[pixel],
+      ];
+
+      const red8 = [
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v13],
+        imgData.data[v11],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[pixel],
+      ];
+
+      const red9 = [
+        imgData.data[v7],
+        imgData.data[v11],
+        imgData.data[v13],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[pixel],
+      ];
+
+      const red10 = [
+        imgData.data[v13],
+        imgData.data[v7],
+        imgData.data[v17],
+        imgData.data[v6],
+        imgData.data[v11],
+        imgData.data[v16],
+        imgData.data[pixel],
+      ];
+
+      const red11 = [
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v11],
+        imgData.data[v13],
+        imgData.data[v17],
+        imgData.data[pixel],
+      ];
+
+      const red12 = [
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v13],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[v11],
+        imgData.data[pixel],
+      ];
+
+      const rAverages = [
+        calculateAverage(red1),
+        calculateAverage(red2),
+        calculateAverage(red3),
+        calculateAverage(red4),
+        calculateAverage(red5),
+        calculateAverage(red6),
+        calculateAverage(red7),
+        calculateAverage(red8),
+        calculateAverage(red9),
+        calculateAverage(red10),
+        calculateAverage(red11),
+        calculateAverage(red12),
+      ];
+
+      const rVariances = [
+        calculateVariance(red1),
+        calculateVariance(red2),
+        calculateVariance(red3),
+        calculateVariance(red4),
+        calculateVariance(red5),
+        calculateVariance(red6),
+        calculateVariance(red7),
+        calculateVariance(red8),
+        calculateVariance(red9),
+        calculateVariance(red10),
+        calculateVariance(red11),
+        calculateVariance(red12),
+      ];
+
+      const kuwaR = rAverages[calculateMinimalVariance(rVariances)];
+
+      const green1 = [
+        imgData.data[v0 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v24 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green2 = [
+        imgData.data[v4 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v20 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green3 = [
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green4 = [
+        imgData.data[v2 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v22 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green5 = [
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green6 = [
+        imgData.data[v6 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green7 = [
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green8 = [
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green9 = [
+        imgData.data[v7 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green10 = [
+        imgData.data[v13 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green11 = [
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const green12 = [
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+      ];
+
+      const gAverages = [
+        calculateAverage(green1),
+        calculateAverage(green2),
+        calculateAverage(green3),
+        calculateAverage(green4),
+        calculateAverage(green5),
+        calculateAverage(green6),
+        calculateAverage(green7),
+        calculateAverage(green8),
+        calculateAverage(green9),
+        calculateAverage(green10),
+        calculateAverage(green11),
+        calculateAverage(green12),
+      ];
+
+      const gVariances = [
+        calculateVariance(green1),
+        calculateVariance(green2),
+        calculateVariance(green3),
+        calculateVariance(green4),
+        calculateVariance(green5),
+        calculateVariance(green6),
+        calculateVariance(green7),
+        calculateVariance(green8),
+        calculateVariance(green9),
+        calculateVariance(green10),
+        calculateVariance(green11),
+        calculateVariance(green12),
+      ];
+      const kuwaG = gAverages[calculateMinimalVariance(gVariances)];
+
+      const blue1 = [
+        imgData.data[v0 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v24 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue2 = [
+        imgData.data[v4 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v20 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue3 = [
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue4 = [
+        imgData.data[v2 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v22 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue5 = [
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue6 = [
+        imgData.data[v6 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue7 = [
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue8 = [
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue9 = [
+        imgData.data[v7 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue10 = [
+        imgData.data[v13 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue11 = [
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const blue12 = [
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+      ];
+
+      const bAverages = [
+        calculateAverage(blue1),
+        calculateAverage(blue2),
+        calculateAverage(blue3),
+        calculateAverage(blue4),
+        calculateAverage(blue5),
+        calculateAverage(blue6),
+        calculateAverage(blue7),
+        calculateAverage(blue8),
+        calculateAverage(blue9),
+        calculateAverage(blue10),
+        calculateAverage(blue11),
+        calculateAverage(blue12),
+      ];
+
+      const bVariances = [
+        calculateVariance(blue1),
+        calculateVariance(blue2),
+        calculateVariance(blue3),
+        calculateVariance(blue4),
+        calculateVariance(blue5),
+        calculateVariance(blue6),
+        calculateVariance(blue7),
+        calculateVariance(blue8),
+        calculateVariance(blue9),
+        calculateVariance(blue10),
+        calculateVariance(blue11),
+        calculateVariance(blue12),
+      ];
+      const kuwaB = bAverages[calculateMinimalVariance(bVariances)];
+      reds.push(kuwaR);
+      greens.push(kuwaG);
+      blues.push(kuwaB);
+    }
+  }
+
+  let j = 0;
+  for (let i = 0; i < newImgData.data.length; i += 4) {
+    newImgData.data[i] = reds[j];
+    newImgData.data[i + 1] = greens[j];
+    newImgData.data[i + 2] = blues[j];
+    newImgData.data[i + 3] = 255;
+    j++;
+  }
+
+  canvas.width = image.width - 2;
+  canvas.height = image.height - 2;
+  ctx.putImageData(newImgData, 0, 0);
+
+  return canvas;
+};
