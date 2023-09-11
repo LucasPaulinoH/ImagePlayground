@@ -640,7 +640,7 @@ export const SideBar = (props: SideBarProps) => {
       <TextField
         size="small"
         type="number"
-        placeholder="Threshold"
+        placeholder="Factor"
         value={dotDetectionFactor}
         onChange={(e) => setDotDetectionFactor(e.target.value)}
       />
@@ -1142,12 +1142,13 @@ export const SideBar = (props: SideBarProps) => {
                 <MenuItem value="HALF">Halftonings</MenuItem>
               </Select>
             </FormControl>
-            {filterTypeSelected === "LOW"
+            {filterTypeSelected == "LOW"
               ? renderLowPassFiltersSelect
-              : filterTypeSelected === "HIGH"
+              : filterTypeSelected == "HIGH"
               ? renderHighPassFiltersSelect
               : renderHalftoningFiltersSelect}
-            {highPassFilterSelected == HighPassFilter.HIGH_BOOST
+            {filterTypeSelected == "HIGH" &&
+            highPassFilterSelected == HighPassFilter.HIGH_BOOST
               ? renderHighBoostFactorInput
               : null}
             <Button
@@ -1158,9 +1159,9 @@ export const SideBar = (props: SideBarProps) => {
               onClick={() => {
                 if (filterTypeSelected === "LOW") {
                   executeLowPassFilterOperation();
-                } else if (filterTypeSelected === "HIGH") {
+                } else if (filterTypeSelected == "HIGH") {
                   executeHighPassFilterOperation();
-                } else if (filterTypeSelected === "HALF") {
+                } else if (filterTypeSelected == "HALF") {
                   executeHalftoningFilterOperation();
                 }
               }}

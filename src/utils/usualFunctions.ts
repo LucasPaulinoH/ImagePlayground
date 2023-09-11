@@ -57,3 +57,15 @@ export const generateHistogramFromImage = (imageMatrix: Uint8ClampedArray) => {
 
   return histogramCanvas;
 };
+
+export const getPixelIndex = (x: number, y: number, width: number): number => {
+  return (y * width + x) * 4;
+}
+
+export const applyMask = (mask: number[], values: number[]): number => {
+  let sum = 0;
+  for (let i = 0; i < mask.length; i++) {
+    sum += mask[i] * values[i];
+  }
+  return sum;
+}

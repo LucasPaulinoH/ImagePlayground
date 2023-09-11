@@ -1,4 +1,5 @@
 import { HalftoningFilter } from "../../types/filters";
+import { getPixelIndex } from "../usualFunctions";
 
 export const executeHalftoning = (
   image: HTMLCanvasElement,
@@ -247,6 +248,3 @@ function createCanvasFromImage(image: HTMLCanvasElement): HTMLCanvasElement {
   return canvas;
 }
 
-function getPixelIndex(x: number, y: number, width: number): number {
-  return (y * width + x) * 4;
-}

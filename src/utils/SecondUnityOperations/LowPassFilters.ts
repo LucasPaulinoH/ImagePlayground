@@ -1,8 +1,8 @@
-// @ts-nocheck
 import {
   LowPassFilter as LowPassFilter,
   LowPassFilter,
 } from "../../types/filters";
+import { getPixelIndex } from "../usualFunctions";
 
 export const executeLowPassFilter = (
   image: HTMLCanvasElement,
@@ -438,7 +438,6 @@ const kawahara = (image: HTMLCanvasElement): HTMLCanvasElement => {
 
       const kuwaR = mediasR[calculateMinimalVariance(varianciasR)];
 
-      // Médias de Green
       const green1 = [
         imgData.data[v0 + 1],
         imgData.data[v1 + 1],
@@ -591,8 +590,8 @@ const kawahara = (image: HTMLCanvasElement): HTMLCanvasElement => {
 };
 
 const tomiraAndTsuji = (image: HTMLCanvasElement): HTMLCanvasElement => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
   canvas.width = image.width - 2;
   canvas.height = image.height - 2;
@@ -608,98 +607,269 @@ const tomiraAndTsuji = (image: HTMLCanvasElement): HTMLCanvasElement => {
 
   for (let y = 2; y <= canvas.height - 1; y++) {
     for (let x = 2; x <= canvas.width - 1; x++) {
-      var v0 = getPixelIndex(x - 2, y - 2)
-      var v1 = getPixelIndex(x - 1, y - 2)
-      var v2 = getPixelIndex(x, y - 2)
-      var v3 = getPixelIndex(x + 1, y - 2)
-      var v4 = getPixelIndex(x + 2, y - 2)
-      var v5 = getPixelIndex(x - 2, y - 1)
-      var v6 = getPixelIndex(x - 1, y - 1)
-      var v7 = getPixelIndex(x, y - 1)
-      var v8 = getPixelIndex(x + 1, y - 1)
-      var v9 = getPixelIndex(x + 2, y - 1)
-      var v10 = getPixelIndex(x - 2, y)
-      var v11 = getPixelIndex(x - 1, y)
-      var pixel = getPixelIndex(x, y) //Pixel atual
-      var v13 = getPixelIndex(x + 1, y)
-      var v14 = getPixelIndex(x + 2, y)
-      var v15 = getPixelIndex(x - 2, y + 1)
-      var v16 = getPixelIndex(x - 1, y + 1)
-      var v17 = getPixelIndex(x, y + 1)
-      var v18 = getPixelIndex(x + 1, y + 1)
-      var v19 = getPixelIndex(x + 2, y + 1)
-      var v20 = getPixelIndex(x - 2, y + 2)
-      var v21 = getPixelIndex(x - 1, y + 2)
-      var v22 = getPixelIndex(x, y + 2)
-      var v23 = getPixelIndex(x + 1, y + 2)
-      var v24 = getPixelIndex(x + 2, y + 2)
+      var v0 = getPixelIndex(x - 2, y - 2);
+      var v1 = getPixelIndex(x - 1, y - 2);
+      var v2 = getPixelIndex(x, y - 2);
+      var v3 = getPixelIndex(x + 1, y - 2);
+      var v4 = getPixelIndex(x + 2, y - 2);
+      var v5 = getPixelIndex(x - 2, y - 1);
+      var v6 = getPixelIndex(x - 1, y - 1);
+      var v7 = getPixelIndex(x, y - 1);
+      var v8 = getPixelIndex(x + 1, y - 1);
+      var v9 = getPixelIndex(x + 2, y - 1);
+      var v10 = getPixelIndex(x - 2, y);
+      var v11 = getPixelIndex(x - 1, y);
+      var pixel = getPixelIndex(x, y); //Pixel atual
+      var v13 = getPixelIndex(x + 1, y);
+      var v14 = getPixelIndex(x + 2, y);
+      var v15 = getPixelIndex(x - 2, y + 1);
+      var v16 = getPixelIndex(x - 1, y + 1);
+      var v17 = getPixelIndex(x, y + 1);
+      var v18 = getPixelIndex(x + 1, y + 1);
+      var v19 = getPixelIndex(x + 2, y + 1);
+      var v20 = getPixelIndex(x - 2, y + 2);
+      var v21 = getPixelIndex(x - 1, y + 2);
+      var v22 = getPixelIndex(x, y + 2);
+      var v23 = getPixelIndex(x + 1, y + 2);
+      var v24 = getPixelIndex(x + 2, y + 2);
 
       //Médias de R
-      var red1 = [imgData.data[v0],imgData.data[v1],imgData.data[v2],imgData.data[v5],
-      imgData.data[v6],imgData.data[v7],imgData.data[v10],imgData.data[v11],imgData.data[pixel]]
-      
-      var red2 = [imgData.data[v2],imgData.data[v3],imgData.data[v4],imgData.data[v7],
-      imgData.data[v8],imgData.data[v9],imgData.data[pixel],imgData.data[v13],imgData.data[v14]]
-      
-      var red3 = [imgData.data[v10],imgData.data[v11],imgData.data[pixel],imgData.data[v15],
-      imgData.data[v16],imgData.data[v17],imgData.data[v20],imgData.data[v21],imgData.data[v22]]
-      
-      var red4 = [imgData.data[pixel],imgData.data[v13],imgData.data[v14],imgData.data[v17],
-      imgData.data[v18],imgData.data[v19],imgData.data[v22],imgData.data[v23],imgData.data[v24]]
+      var red1 = [
+        imgData.data[v0],
+        imgData.data[v1],
+        imgData.data[v2],
+        imgData.data[v5],
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[pixel],
+      ];
 
-      var red5 = [imgData.data[v6],imgData.data[v7],imgData.data[v8],imgData.data[v11],
-      imgData.data[pixel],imgData.data[v13],imgData.data[v16],imgData.data[v17],imgData.data[v18]]
+      var red2 = [
+        imgData.data[v2],
+        imgData.data[v3],
+        imgData.data[v4],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v9],
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v14],
+      ];
 
-      var mediasR = [calcularMedia(red1), calcularMedia(red2), calcularMedia(red3), calcularMedia(red4), calcularMedia(red5)]
+      var red3 = [
+        imgData.data[v10],
+        imgData.data[v11],
+        imgData.data[pixel],
+        imgData.data[v15],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v20],
+        imgData.data[v21],
+        imgData.data[v22],
+      ];
 
-      var varianciasR = [calcularVariancia(red1), calcularVariancia(red2), calcularVariancia(red3), calcularVariancia(red4), calcularVariancia(red5)]
-      var kuwaR = mediasR[calcularMinimoVariancia(varianciasR)]
+      var red4 = [
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v14],
+        imgData.data[v17],
+        imgData.data[v18],
+        imgData.data[v19],
+        imgData.data[v22],
+        imgData.data[v23],
+        imgData.data[v24],
+      ];
+
+      var red5 = [
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+        imgData.data[v11],
+        imgData.data[pixel],
+        imgData.data[v13],
+        imgData.data[v16],
+        imgData.data[v17],
+        imgData.data[v18],
+      ];
+
+      var mediasR = [
+        calcularMedia(red1),
+        calcularMedia(red2),
+        calcularMedia(red3),
+        calcularMedia(red4),
+        calcularMedia(red5),
+      ];
+
+      var varianciasR = [
+        calcularVariancia(red1),
+        calcularVariancia(red2),
+        calcularVariancia(red3),
+        calcularVariancia(red4),
+        calcularVariancia(red5),
+      ];
+      var kuwaR = mediasR[calcularMinimoVariancia(varianciasR)];
 
       //Médias de Green
-      var green1 = [imgData.data[v0+1] ,imgData.data[v1+1] ,imgData.data[v2+1] ,imgData.data[v5+1] ,
-      imgData.data[v6+1] ,imgData.data[v7+1] ,imgData.data[v10+1] ,imgData.data[v11+1] ,imgData.data[pixel+1] ]
-      
-      var green2 = [imgData.data[v2+1] ,imgData.data[v3+1] ,imgData.data[v4+1] ,imgData.data[v7+1] ,
-      imgData.data[v8+1] ,imgData.data[v9+1] ,imgData.data[pixel+1] ,imgData.data[v13+1] ,imgData.data[v14+1] ]
-      
-      var green3 = [imgData.data[v10+1] ,imgData.data[v11+1] ,imgData.data[pixel+1] ,imgData.data[v15+1] ,
-      imgData.data[v16+1] ,imgData.data[v17+1] ,imgData.data[v20+1] ,imgData.data[v21+1] ,imgData.data[v22+1] ]
-      
-      var green4 = [imgData.data[pixel+1] ,imgData.data[v13+1] ,imgData.data[v14+1] ,imgData.data[v17+1] ,
-      imgData.data[v18+1] ,imgData.data[v19+1] ,imgData.data[v22+1] ,imgData.data[v23+1] ,imgData.data[v24+1] ]
+      var green1 = [
+        imgData.data[v0 + 1],
+        imgData.data[v1 + 1],
+        imgData.data[v2 + 1],
+        imgData.data[v5 + 1],
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+      ];
 
-      var green5 = [imgData.data[v6+1],imgData.data[v7+1],imgData.data[v8+1],imgData.data[v11+1],
-      imgData.data[pixel+1],imgData.data[v13+1],imgData.data[v16+1],imgData.data[v17+1],imgData.data[v18+1]]
+      var green2 = [
+        imgData.data[v2 + 1],
+        imgData.data[v3 + 1],
+        imgData.data[v4 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v9 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+      ];
 
-      var mediasG = [calcularMedia(green1), calcularMedia(green2), calcularMedia(green3), calcularMedia(green4), calcularMedia(green5)]
+      var green3 = [
+        imgData.data[v10 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v15 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v20 + 1],
+        imgData.data[v21 + 1],
+        imgData.data[v22 + 1],
+      ];
 
-      var varianciasG = [calcularVariancia(green1), calcularVariancia(green2), calcularVariancia(green3), calcularVariancia(green4), calcularVariancia(green5)]
-      var kuwaG = mediasG[calcularMinimoVariancia(varianciasG)]
+      var green4 = [
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v14 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+        imgData.data[v19 + 1],
+        imgData.data[v22 + 1],
+        imgData.data[v23 + 1],
+        imgData.data[v24 + 1],
+      ];
+
+      var green5 = [
+        imgData.data[v6 + 1],
+        imgData.data[v7 + 1],
+        imgData.data[v8 + 1],
+        imgData.data[v11 + 1],
+        imgData.data[pixel + 1],
+        imgData.data[v13 + 1],
+        imgData.data[v16 + 1],
+        imgData.data[v17 + 1],
+        imgData.data[v18 + 1],
+      ];
+
+      var mediasG = [
+        calcularMedia(green1),
+        calcularMedia(green2),
+        calcularMedia(green3),
+        calcularMedia(green4),
+        calcularMedia(green5),
+      ];
+
+      var varianciasG = [
+        calcularVariancia(green1),
+        calcularVariancia(green2),
+        calcularVariancia(green3),
+        calcularVariancia(green4),
+        calcularVariancia(green5),
+      ];
+      var kuwaG = mediasG[calcularMinimoVariancia(varianciasG)];
 
       //Médias de Blue
-      var blue1 = [imgData.data[v0+2] ,imgData.data[v1+2] ,imgData.data[v2+2] ,imgData.data[v5+2] ,
-      imgData.data[v6+2] ,imgData.data[v7+2] ,imgData.data[v10+2] ,imgData.data[v11+2] ,imgData.data[pixel+2] ]
-      
-      var blue2 = [imgData.data[v2+2] ,imgData.data[v3+2] ,imgData.data[v4+2] ,imgData.data[v7+2] ,
-      imgData.data[v8+2] ,imgData.data[v9+2] ,imgData.data[pixel+2] ,imgData.data[v13+2] ,imgData.data[v14+2] ]
-      
-      var blue3 = [imgData.data[v10+2] ,imgData.data[v11+2] ,imgData.data[pixel+2] ,imgData.data[v15+2] ,
-      imgData.data[v16+2] ,imgData.data[v17+2] ,imgData.data[v20+2] ,imgData.data[v21+2] ,imgData.data[v22+2] ]
-      
-      var blue4 = [imgData.data[pixel+2] ,imgData.data[v13+2] ,imgData.data[v14+2] ,imgData.data[v17+2] ,
-      imgData.data[v18+2] ,imgData.data[v19+2] ,imgData.data[v22+2] ,imgData.data[v23+2] ,imgData.data[v24+2] ]
+      var blue1 = [
+        imgData.data[v0 + 2],
+        imgData.data[v1 + 2],
+        imgData.data[v2 + 2],
+        imgData.data[v5 + 2],
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+      ];
 
-      var blue5 = [imgData.data[v6+2],imgData.data[v7+2],imgData.data[v8+2],imgData.data[v11+2],
-      imgData.data[pixel+2],imgData.data[v13+2],imgData.data[v16+2],imgData.data[v17+2],imgData.data[v18+2]]
+      var blue2 = [
+        imgData.data[v2 + 2],
+        imgData.data[v3 + 2],
+        imgData.data[v4 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v9 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+      ];
 
-      var mediasB = [calcularMedia(blue1), calcularMedia(blue2), calcularMedia(blue3), calcularMedia(blue4), calcularMedia(blue5)]
+      var blue3 = [
+        imgData.data[v10 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v15 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v20 + 2],
+        imgData.data[v21 + 2],
+        imgData.data[v22 + 2],
+      ];
 
-      var varianciasB = [calcularVariancia(blue1), calcularVariancia(blue2), calcularVariancia(blue3), calcularVariancia(blue4), calcularVariancia(blue5)]
-      var kuwaB = mediasB[calcularMinimoVariancia(varianciasB)]
+      var blue4 = [
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v14 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+        imgData.data[v19 + 2],
+        imgData.data[v22 + 2],
+        imgData.data[v23 + 2],
+        imgData.data[v24 + 2],
+      ];
 
-      reds.push(kuwaR)
-      greens.push(kuwaG)
-      blues.push(kuwaB)
+      var blue5 = [
+        imgData.data[v6 + 2],
+        imgData.data[v7 + 2],
+        imgData.data[v8 + 2],
+        imgData.data[v11 + 2],
+        imgData.data[pixel + 2],
+        imgData.data[v13 + 2],
+        imgData.data[v16 + 2],
+        imgData.data[v17 + 2],
+        imgData.data[v18 + 2],
+      ];
+
+      var mediasB = [
+        calcularMedia(blue1),
+        calcularMedia(blue2),
+        calcularMedia(blue3),
+        calcularMedia(blue4),
+        calcularMedia(blue5),
+      ];
+
+      var varianciasB = [
+        calcularVariancia(blue1),
+        calcularVariancia(blue2),
+        calcularVariancia(blue3),
+        calcularVariancia(blue4),
+        calcularVariancia(blue5),
+      ];
+      var kuwaB = mediasB[calcularMinimoVariancia(varianciasB)];
+
+      reds.push(kuwaR);
+      greens.push(kuwaG);
+      blues.push(kuwaB);
     }
   }
 
@@ -748,8 +918,4 @@ function calculateAverage(values: number[]): number {
     sum += values[i];
   }
   return sum / 9;
-}
-
-function getPixelIndex(x: number, y: number, width: number): number {
-  return (y * width + x) * 4;
 }

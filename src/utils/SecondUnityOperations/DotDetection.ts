@@ -1,3 +1,5 @@
+import { applyMask, getPixelIndex } from "../usualFunctions";
+
 export const executeDotDetection = (
   image: HTMLCanvasElement,
   factor: number
@@ -7,11 +9,12 @@ export const executeDotDetection = (
   const ctx = image.getContext("2d", { willReadFrequently: true });
   const imgData = ctx.getImageData(0, 0, image.width, image.height);
   const newImgData = new ImageData(image.width - 1, image.height - 1);
+
   const reds: number[] = [];
   const greens: number[] = [];
   const blues: number[] = [];
 
-  const mascara = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
+  const mask = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
 
   for (let y = 1; y <= image.height - 1; y++) {
     for (let x = 1; x <= image.width - 1; x++) {
@@ -59,9 +62,9 @@ export const executeDotDetection = (
         imgData.data[v8 + 2],
       ];
 
-      const aR = applyMask(mascara, valoresR);
-      const aG = applyMask(mascara, valoresG);
-      const aB = applyMask(mascara, valoresB);
+      const aR = applyMask(mask, valoresR);
+      const aG = applyMask(mask, valoresG);
+      const aB = applyMask(mask, valoresB);
 
       if (aR < factor) {
         reds.push(0);
@@ -98,15 +101,3 @@ export const executeDotDetection = (
 
   return resultCanvas;
 };
-
-function getPixelIndex(x: number, y: number, width: number): number {
-  return (y * width + x) * 4;
-}
-
-function applyMask(mascara: number[], valores: number[]): number {
-  let soma = 0;
-  for (let i = 0; i < mascara.length; i++) {
-    soma += mascara[i] * valores[i];
-  }
-  return soma;
-}

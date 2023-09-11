@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { HighPassFilter } from "../../types/filters";
-import { meanFilter } from "./LowPassFilters";
+import { applyMask, getPixelIndex } from "../usualFunctions";
 
 export const executeHighPassFilter = (
   image: HTMLCanvasElement,
@@ -122,8 +121,8 @@ const highBoost = (
   image: HTMLCanvasElement,
   amplificationFactor: number
 ): HTMLCanvasElement => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
   if (!ctx) {
     throw new Error("Canvas 2D context is not supported.");
@@ -135,7 +134,7 @@ const highBoost = (
   ctx.drawImage(image, 0, 0, image.width, image.height);
   const imgData = ctx.getImageData(0, 0, image.width, image.height);
 
-  const mask = [-1, -1, -1, -1, (9 * amplificationFactor) - 1, -1, -1, -1, -1];
+  const mask = [-1, -1, -1, -1, 9 * amplificationFactor - 1, -1, -1, -1, -1];
 
   const reds = [];
   const greens = [];
@@ -162,7 +161,7 @@ const highBoost = (
         imgData.data[v5],
         imgData.data[v6],
         imgData.data[v7],
-        imgData.data[v8]
+        imgData.data[v8],
       ];
 
       const gValues = [
@@ -174,7 +173,7 @@ const highBoost = (
         imgData.data[v5 + 1],
         imgData.data[v6 + 1],
         imgData.data[v7 + 1],
-        imgData.data[v8 + 1]
+        imgData.data[v8 + 1],
       ];
 
       const bValues = [
@@ -186,7 +185,7 @@ const highBoost = (
         imgData.data[v5 + 2],
         imgData.data[v6 + 2],
         imgData.data[v7 + 2],
-        imgData.data[v8 + 2]
+        imgData.data[v8 + 2],
       ];
 
       const aR = applyMask(mask, rValues);
@@ -215,15 +214,3 @@ const highBoost = (
 
   return canvas;
 };
-
-function applyMask(mask: number[], values: number[]): number {
-  let sum = 0;
-  for (let i = 0; i < mask.length; i++) {
-    sum += mask[i] * values[i];
-  }
-  return sum;
-}
-
-function getPixelIndex(x: number, y: number, width: number): number {
-  return (y * width + x) * 4;
-}
