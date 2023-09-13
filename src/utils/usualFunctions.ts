@@ -70,6 +70,16 @@ export const applyMask = (mask: number[], values: number[]): number => {
   return sum;
 };
 
+export const calculateMax = (values: number[]): number => {
+  let max = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] > max) {
+      max = values[i];
+    }
+  }
+  return max;
+};
+
 export const calculateMinimalVariance = (values: number[]): number => {
   let min = values[0];
   let pos = 0;
