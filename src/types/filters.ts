@@ -37,7 +37,7 @@ export enum BorderDetectionFilter {
   CROSSED_ROBERTS,
   PREWIIT_GX,
   PREWIIT_GY,
-  MAGNITUDE_PREWIITE,
+  MAGNITUDE_PREWIIT,
   SOBEL_GX,
   SOBEL_GY,
   MAGNITUDE_SOBEL,
@@ -49,5 +49,8 @@ export enum BorderDetectionFilter {
 }
 
 export enum LineDetectionFilter {
-  HORIZONTAL, VERTICAL, DEGREES_45, DEGREES_135
+  HORIZONTAL,
+  VERTICAL,
+  DEGREES_45,
+  DEGREES_135,
 }

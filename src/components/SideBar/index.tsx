@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Toolbar,
@@ -75,6 +74,8 @@ import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import { executeDotDetection } from "../../utils/SecondUnityOperations/DotDetection";
 import GridGoldenratioIcon from "@mui/icons-material/GridGoldenratio";
 import { executeLineDetection } from "../../utils/SecondUnityOperations/LineDetection";
+import DataThresholdingIcon from "@mui/icons-material/DataThresholding";
+import GroupWorkIcon from "@mui/icons-material/GroupWork";
 
 const drawerWidth = 240;
 
@@ -111,6 +112,8 @@ export const SideBar = (props: SideBarProps) => {
   const [dotDetectionOpen, setDotDetectionOpen] = useState(false);
   const [lineDetectionOpen, setLineDetectionOpen] = useState(false);
   const [borderDetectionOpen, setBorderDetectionOpen] = useState(false);
+  const [thresholdingOpen, setThresholdingOpen] = useState(false);
+  const [regionSegmentationOpen, setRegionSegmentationOpen] = useState(false);
 
   const [zoomSelected, setZoomSelected] = useState<ZoomOperation>(
     ZoomOperation.REPLICATION
@@ -120,7 +123,7 @@ export const SideBar = (props: SideBarProps) => {
   const [enhancementSelected, setEnhancementSelected] =
     useState<EnhancementOperation>(EnhancementOperation.INTERVAL);
 
-  const [filterTypeSelected, setFilterTypeSelected] = useState<string>("HIGH");
+  const [filterTypeSelected, setFilterTypeSelected] = useState<string>("LOW");
 
   const [lineDetectionSelected, setLineDetectionSelected] =
     useState<LineDetectionFilter>(LineDetectionFilter.HORIZONTAL);
@@ -1293,7 +1296,7 @@ export const SideBar = (props: SideBarProps) => {
                 <MenuItem value={BorderDetectionFilter.PREWIIT_GY}>
                   Prewiit Gy
                 </MenuItem>
-                <MenuItem value={BorderDetectionFilter.MAGNITUDE_PREWIITE}>
+                <MenuItem value={BorderDetectionFilter.MAGNITUDE_PREWIIT}>
                   Magnitude Prewiit
                 </MenuItem>
                 <MenuItem value={BorderDetectionFilter.SOBEL_GX}>
@@ -1326,6 +1329,106 @@ export const SideBar = (props: SideBarProps) => {
               sx={{ textTransform: "none" }}
               disableElevation
               onClick={executeBorderDetectionOperation}
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={() => setThresholdingOpen(!thresholdingOpen)}>
+          <ListItemIcon>
+            <DataThresholdingIcon />
+          </ListItemIcon>
+          <ListItemText primary="Thresholding" />
+          {thresholdingOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={thresholdingOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={lineDetectionSelected}
+                onChange={(e) => setLineDetectionSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value={LineDetectionFilter.HORIZONTAL}>
+                  Horizontal
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.VERTICAL}>
+                  Vertical
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_45}>45°</MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_135}>
+                  135°
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+              onClick={executeLineDetectionOperation}
+            >
+              Apply operation
+            </Button>
+          </Box>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => setRegionSegmentationOpen(!regionSegmentationOpen)}
+        >
+          <ListItemIcon>
+            <GroupWorkIcon />
+          </ListItemIcon>
+          <ListItemText primary="Region segmentation" />
+          {regionSegmentationOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={regionSegmentationOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              minWidth: 120,
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <FormControl fullWidth>
+              <Select
+                value={lineDetectionSelected}
+                onChange={(e) => setLineDetectionSelected(e.target.value)}
+                size="small"
+              >
+                <MenuItem value={LineDetectionFilter.HORIZONTAL}>
+                  Horizontal
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.VERTICAL}>
+                  Vertical
+                </MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_45}>45°</MenuItem>
+                <MenuItem value={LineDetectionFilter.DEGREES_135}>
+                  135°
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ textTransform: "none" }}
+              disableElevation
+              onClick={executeLineDetectionOperation}
             >
               Apply operation
             </Button>
