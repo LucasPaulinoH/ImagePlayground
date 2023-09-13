@@ -1,4 +1,5 @@
 import { BorderDetectionFilter } from "../../types/filters";
+import { reverse } from "../FirstUnityOperations/Enhancement";
 import { applyMask, calculateMax, getPixelIndex } from "../usualFunctions";
 
 export const executeBorderDetection = (
@@ -37,21 +38,24 @@ export const executeBorderDetection = (
       resultingImageCanvas = magnitude(image, SOBEL_GX_MASK, SOBEL_GY_MASK);
       break;
     case BorderDetectionFilter.KRISH:
-      resultingImageCanvas = krish(image);
+      resultingImageCanvas = krishAndRobinson(image, KRISH_MASK);
       break;
     case BorderDetectionFilter.ROBINSON:
+      resultingImageCanvas = krishAndRobinson(image, ROBINSON_MASK);
       break;
     case BorderDetectionFilter.FREY_CHEN:
       break;
     case BorderDetectionFilter.LAPLACIAN_H1:
+      resultingImageCanvas = laplacian(image, LAPLACIAN_H1_MATRIX);
       break;
     case BorderDetectionFilter.LAPLACIAN_H2:
+      resultingImageCanvas = laplacian(image, LAPLACIAN_H2_MATRIX);
       break;
     default:
       console.warn("Invalid border detection filter selected.");
       break;
   }
-  return resultingImageCanvas;
+  return reverse(resultingImageCanvas);
 };
 
 const ROBERTS_X_MASK = [1, 0, -1, 0];
@@ -65,6 +69,31 @@ const PREWIIT_GY_MASK = [-1, -1, -1, 0, 0, 0, 1, 1, 1];
 
 const SOBEL_GX_MASK = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
 const SOBEL_GY_MASK = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+
+const KRISH_MASK = [
+  [5, -3, -3, 5, 0, -3, 5, -3, -3],
+  [-3, -3, -3, 5, 0, -3, 5, 5, -3],
+  [-3, -3, -3, -3, 0, -3, 5, 5, 5],
+  [-3, -3, -3, -3, 0, 5, -3, 5, 5],
+  [-3, -3, 5, -3, 0, 5, -3, -3, 5],
+  [-3, 5, 5, -3, 0, 5, -3, -3, -3],
+  [5, 5, 5, -3, 0, -3, -3, -3, -3],
+  [5, 5, -3, 5, 0, -3, -3, -3, -3],
+];
+
+const ROBINSON_MASK = [
+  [1, 0, -1, 2, 0, -2, 1, 0, -1],
+  [0, -1, -2, 1, 0, -1, 2, 1, 0],
+  [-1, -2, -1, 0, 0, 0, 1, 2, 1],
+  [-2, -1, 0, -1, 0, 1, 0, 1, 2],
+  [-1, 0, 1, -2, 0, 2, -1, 0, 1],
+  [0, 1, 2, -1, 0, 1, -2, -1, 0],
+  [1, 2, 1, 0, 0, 0, -1, -2, -1],
+  [2, 1, 0, 1, 0, -1, 0, -1, -2],
+];
+
+const LAPLACIAN_H1_MATRIX = [0, -1, 0, -1, 4, -1, 0, -1, 0];
+const LAPLACIAN_H2_MATRIX = [-1, -4, -1, -4, 20, -4, -1, -4, -1];
 
 const roberts = (
   image: HTMLCanvasElement,
@@ -254,25 +283,17 @@ const magnitude = (
   return resultCanvas;
 };
 
-const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
-  const ctx = image.getContext('2d');
+const krishAndRobinson = (
+  image: HTMLCanvasElement,
+  mask: number[][]
+): HTMLCanvasElement => {
+  const ctx = image.getContext("2d");
   const srcImage = ctx.getImageData(0, 0, image.width, image.height);
   const newImgData = new ImageData(image.width - 1, image.height - 1);
-  
+
   const reds: number[] = [];
   const greens: number[] = [];
   const blues: number[] = [];
-  
-  const mascaras: number[][] = [
-    [5, -3, -3, 5, 0, -3, 5, -3, -3],
-    [-3, -3, -3, 5, 0, -3, 5, 5, -3],
-    [-3, -3, -3, -3, 0, -3, 5, 5, 5],
-    [-3, -3, -3, -3, 0, 5, -3, 5, 5],
-    [-3, -3, 5, -3, 0, 5, -3, -3, 5],
-    [-3, 5, 5, -3, 0, 5, -3, -3, -3],
-    [5, 5, 5, -3, 0, -3, -3, -3, -3],
-    [5, 5, -3, 5, 0, -3, -3, -3, -3],
-  ];
 
   for (let y = 1; y < image.height; y++) {
     for (let x = 1; x < image.width; x++) {
@@ -280,13 +301,13 @@ const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
       const v1 = getPixelIndex(x, y - 1, image.width);
       const v2 = getPixelIndex(x + 1, y - 1, image.width);
       const v3 = getPixelIndex(x - 1, y, image.width);
-      const pixel = getPixelIndex(x, y, image.width); // Pixel atual
+      const pixel = getPixelIndex(x, y, image.width);
       const v5 = getPixelIndex(x + 1, y, image.width);
       const v6 = getPixelIndex(x - 1, y + 1, image.width);
       const v7 = getPixelIndex(x, y + 1, image.width);
       const v8 = getPixelIndex(x + 1, y + 1, image.width);
 
-      const valoresR = [
+      const rValues = [
         srcImage.data[v0],
         srcImage.data[v1],
         srcImage.data[v2],
@@ -298,7 +319,7 @@ const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
         srcImage.data[v8],
       ];
 
-      const valoresG = [
+      const gValues = [
         srcImage.data[v0 + 1],
         srcImage.data[v1 + 1],
         srcImage.data[v2 + 1],
@@ -310,7 +331,7 @@ const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
         srcImage.data[v8 + 1],
       ];
 
-      const valoresB = [
+      const bValues = [
         srcImage.data[v0 + 2],
         srcImage.data[v1 + 2],
         srcImage.data[v2 + 2],
@@ -322,9 +343,9 @@ const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
         srcImage.data[v8 + 2],
       ];
 
-      const valuesR = mascaras.map((mascara) => applyMask(mascara, valoresR));
-      const valuesG = mascaras.map((mascara) => applyMask(mascara, valoresG));
-      const valuesB = mascaras.map((mascara) => applyMask(mascara, valoresB));
+      const valuesR = mask.map((mask) => applyMask(mask, rValues));
+      const valuesG = mask.map((mask) => applyMask(mask, gValues));
+      const valuesB = mask.map((mask) => applyMask(mask, bValues));
 
       reds.push(calculateMax(valuesR));
       greens.push(calculateMax(valuesG));
@@ -341,12 +362,63 @@ const krish = (image: HTMLCanvasElement): HTMLCanvasElement => {
     j++;
   }
 
-  const canvas = document.createElement('canvas');
-  const newCtx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const newCtx = canvas.getContext("2d");
   canvas.width = image.width - 1;
   canvas.height = image.height - 1;
   newCtx.putImageData(newImgData, 0, 0);
   return canvas;
+};
+
+const laplacian = (
+  image: HTMLCanvasElement,
+  mask: number[]
+): HTMLCanvasElement => {
+  const ctx = image.getContext("2d");
+  const imgData = ctx!.getImageData(0, 0, image.width, image.height);
+  const newImgData = new ImageData(image.width - 1, image.height - 1);
+
+  for (let y = 1; y < image.height; y++) {
+    for (let x = 1; x < image.width; x++) {
+      const v0 = getPixelIndex(x - 1, y - 1, image.width);
+      const v1 = getPixelIndex(x, y - 1, image.width);
+      const v2 = getPixelIndex(x + 1, y - 1, image.width);
+      const v3 = getPixelIndex(x - 1, y, image.width);
+      const pixel = getPixelIndex(x, y, image.width);
+      const v5 = getPixelIndex(x + 1, y, image.width);
+      const v6 = getPixelIndex(x - 1, y + 1, image.width);
+      const v7 = getPixelIndex(x, y + 1, image.width);
+      const v8 = getPixelIndex(x + 1, y + 1, image.width);
+
+      const rValues = [
+        imgData.data[v0],
+        imgData.data[v1],
+        imgData.data[v2],
+        imgData.data[v3],
+        imgData.data[pixel],
+        imgData.data[v5],
+        imgData.data[v6],
+        imgData.data[v7],
+        imgData.data[v8],
+      ];
+
+      const valuesR = applyMask(mask, rValues);
+
+      const i = getPixelIndex(x - 1, y - 1, image.width - 1);
+      newImgData.data[i] = valuesR;
+      newImgData.data[i + 1] = valuesR;
+      newImgData.data[i + 2] = valuesR;
+      newImgData.data[i + 3] = 255;
+    }
+  }
+
+  const resultCanvas = document.createElement("canvas");
+  const resultCtx = resultCanvas.getContext("2d");
+  resultCanvas.width = image.width - 1;
+  resultCanvas.height = image.height - 1;
+  resultCtx?.putImageData(newImgData, 0, 0);
+
+  return resultCanvas;
 };
 
 function setPixel(

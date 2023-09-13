@@ -119,7 +119,7 @@ const binary = (image: HTMLCanvasElement): HTMLCanvasElement => {
   return resultingImage;
 };
 
-const reverse = (image: HTMLCanvasElement): HTMLCanvasElement => {
+export const reverse = (image: HTMLCanvasElement): HTMLCanvasElement => {
   const originalContext = image.getContext("2d");
   const imageData = originalContext.getImageData(
     0,
