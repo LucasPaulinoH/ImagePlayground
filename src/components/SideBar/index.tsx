@@ -78,6 +78,7 @@ import { executeLineDetection } from "../../utils/SecondUnityOperations/LineDete
 import DataThresholdingIcon from "@mui/icons-material/DataThresholding";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import { executeThresholding } from "../../utils/SecondUnityOperations/Thresholding";
+import { executeRegionSegmentation } from "../../utils/SecondUnityOperations/RegionSegmentation";
 
 const drawerWidth = 240;
 
@@ -170,6 +171,10 @@ export const SideBar = (props: SideBarProps) => {
   const [dotDetectionFactor, setDotDetectionFactor] = useState<number>();
   const [thresholdingGapSize, setThresholdingGapSize] = useState<number>();
   const [ponderationFactor, setPonderationFactor] = useState<number>();
+
+  const [regionSegmentationThreshold, setRegionSegmentationThreshold] =
+    useState<number>(10);
+  const [seeds, setSeeds] = useState<number>(1);
 
   const [selectedUnity, setSelectedUnity] = useState<number>(1);
 
@@ -409,7 +414,9 @@ export const SideBar = (props: SideBarProps) => {
   const executeRegionSegmentationOperation = () => {
     if (props.images.length > 0) {
       const operationResult: HTMLCanvasElement = executeRegionSegmentation(
-        props.selectedImages[0]
+        props.selectedImages[0],
+        regionSegmentationThreshold,
+        seeds
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -1465,24 +1472,22 @@ export const SideBar = (props: SideBarProps) => {
               gap: 2,
             }}
           >
-            <FormControl fullWidth>
-              <Select
-                value={lineDetectionSelected}
-                onChange={(e) => setLineDetectionSelected(e.target.value)}
-                size="small"
-              >
-                <MenuItem value={LineDetectionFilter.HORIZONTAL}>
-                  Horizontal
-                </MenuItem>
-                <MenuItem value={LineDetectionFilter.VERTICAL}>
-                  Vertical
-                </MenuItem>
-                <MenuItem value={LineDetectionFilter.DEGREES_45}>45°</MenuItem>
-                <MenuItem value={LineDetectionFilter.DEGREES_135}>
-                  135°
-                </MenuItem>
-              </Select>
-            </FormControl>
+            <TextField
+              size="small"
+              type="number"
+              placeholder="Threshold"
+              value={regionSegmentationThreshold}
+              onChange={(e) => setRegionSegmentationThreshold(e.target.value)}
+            />
+            <TextField
+              size="small"
+              type="number"
+              placeholder="Seeds"
+              value={seeds}
+              onChange={(e) => setSeeds(e.target.value)}
+              inputProps={{ min: 1 }}
+            />
+
             <Button
               variant="contained"
               fullWidth
