@@ -1,3 +1,4 @@
+import { reverse } from "../FirstUnityOperations/Enhancement";
 import { applyMask, getPixelIndex } from "../usualFunctions";
 
 export const executeDotDetection = (
@@ -99,5 +100,5 @@ export const executeDotDetection = (
   resultCanvas.height = image.height - 1;
   resultCtx.putImageData(newImgData, 0, 0);
 
-  return resultCanvas;
+  return reverse(resultCanvas);
 };

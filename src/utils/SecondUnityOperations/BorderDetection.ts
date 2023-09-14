@@ -38,12 +38,13 @@ export const executeBorderDetection = (
       resultingImageCanvas = magnitude(image, SOBEL_GX_MASK, SOBEL_GY_MASK);
       break;
     case BorderDetectionFilter.KRISH:
-      resultingImageCanvas = krishAndRobinson(image, KRISH_MASK);
+      resultingImageCanvas = krishRobinsonAndFreyChen(image, KRISH_MASK);
       break;
     case BorderDetectionFilter.ROBINSON:
-      resultingImageCanvas = krishAndRobinson(image, ROBINSON_MASK);
+      resultingImageCanvas = krishRobinsonAndFreyChen(image, ROBINSON_MASK);
       break;
     case BorderDetectionFilter.FREY_CHEN:
+      resultingImageCanvas = krishRobinsonAndFreyChen(image, FREY_CHEN_MASK);
       break;
     case BorderDetectionFilter.LAPLACIAN_H1:
       resultingImageCanvas = laplacian(image, LAPLACIAN_H1_MATRIX);
@@ -90,6 +91,20 @@ const ROBINSON_MASK = [
   [0, 1, 2, -1, 0, 1, -2, -1, 0],
   [1, 2, 1, 0, 0, 0, -1, -2, -1],
   [2, 1, 0, 1, 0, -1, 0, -1, -2],
+];
+
+const SQRT_OF_2 = Math.sqrt(2);
+
+const FREY_CHEN_MASK = [
+  [1, SQRT_OF_2, 1, 0, 0, 0, -1, -SQRT_OF_2, -1],
+  [1, 0, -1, SQRT_OF_2, 0, -SQRT_OF_2, 1, 0, -1],
+  [0, -1, SQRT_OF_2, 1, 0, -1, -SQRT_OF_2, 1, 0],
+  [SQRT_OF_2, -1, 0, -1, 0, 1, 0, 1, -SQRT_OF_2],
+  [0, 1, 0, -1, 0, -1, 0, 1, 0],
+  [-1, 0, 1, 0, 0, 0, 1, 0, -1],
+  [1, -2, 1, -2, 4, -2, 1, -2, 1],
+  [-2, 1, -2, 1, 4, 1, -2, 1, -2],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
 const LAPLACIAN_H1_MATRIX = [0, -1, 0, -1, 4, -1, 0, -1, 0];
@@ -283,7 +298,7 @@ const magnitude = (
   return resultCanvas;
 };
 
-const krishAndRobinson = (
+const krishRobinsonAndFreyChen = (
   image: HTMLCanvasElement,
   mask: number[][]
 ): HTMLCanvasElement => {

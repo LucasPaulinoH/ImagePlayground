@@ -1,4 +1,5 @@
 import { LineDetectionFilter } from "../../types/filters";
+import { reverse } from "../FirstUnityOperations/Enhancement";
 import { applyMask, getPixelIndex } from "../usualFunctions";
 
 export const executeLineDetection = (
@@ -24,7 +25,7 @@ export const executeLineDetection = (
       console.warn("Invalid line detection filter selected.");
       break;
   }
-  return resultingImageCanvas;
+  return reverse(resultingImageCanvas);
 };
 
 const HORIZONTAL_MATRIX = [-1, -1, -1, 2, 2, 2, -1, -1, -1];
