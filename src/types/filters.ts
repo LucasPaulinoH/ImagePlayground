@@ -54,3 +54,11 @@ export enum LineDetectionFilter {
   DEGREES_45,
   DEGREES_135,
 }
+
+export enum ThresholdingType {
+  GLOBAL,
+  LOCAL_AVERAGE,
+  LOCAL_MEDIAN,
+  LOCAL_MIN_MAX,
+  NI_BLACK,
+}

@@ -64,6 +64,7 @@ import {
   HighPassFilter,
   LineDetectionFilter,
   LowPassFilter,
+  ThresholdingType,
 } from "../../types/filters";
 import { executeLowPassFilter } from "../../utils/SecondUnityOperations/LowPassFilters";
 import { executeHighPassFilter } from "../../utils/SecondUnityOperations/HighPassFilters";
@@ -76,6 +77,7 @@ import GridGoldenratioIcon from "@mui/icons-material/GridGoldenratio";
 import { executeLineDetection } from "../../utils/SecondUnityOperations/LineDetection";
 import DataThresholdingIcon from "@mui/icons-material/DataThresholding";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
+import { executeThresholding } from "../../utils/SecondUnityOperations/Thresholding";
 
 const drawerWidth = 240;
 
@@ -129,6 +131,8 @@ export const SideBar = (props: SideBarProps) => {
     useState<LineDetectionFilter>(LineDetectionFilter.HORIZONTAL);
   const [borderDetectionSelected, setBorderDetectionSelected] =
     useState<BorderDetectionFilter>(BorderDetectionFilter.ROBERTS);
+  const [thresholdingSelected, setThresholdingSelected] =
+    useState<ThresholdingType>(ThresholdingType.GLOBAL);
 
   const [lowPassFilterSelected, setLowPassFilterSelected] =
     useState<LowPassFilter>(LowPassFilter.MEAN_3X3);
@@ -164,6 +168,8 @@ export const SideBar = (props: SideBarProps) => {
   const [bitSlicingFactor, setBitSlicingFactor] = useState<number>(1);
   const [highBoostFactor, setHighBoostFactor] = useState<number>(1);
   const [dotDetectionFactor, setDotDetectionFactor] = useState<number>();
+  const [thresholdingGapSize, setThresholdingGapSize] = useState<number>();
+  const [ponderationFactor, setPonderationFactor] = useState<number>();
 
   const [selectedUnity, setSelectedUnity] = useState<number>(1);
 
@@ -383,6 +389,27 @@ export const SideBar = (props: SideBarProps) => {
       const operationResult: HTMLCanvasElement = executeBorderDetection(
         props.selectedImages[0],
         borderDetectionSelected
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeThresholdingOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeThresholding(
+        props.selectedImages[0],
+        thresholdingSelected,
+        thresholdingGapSize,
+        ponderationFactor
+      );
+      props.setImages((previousImages) => [...previousImages, operationResult]);
+    }
+  };
+
+  const executeRegionSegmentationOperation = () => {
+    if (props.images.length > 0) {
+      const operationResult: HTMLCanvasElement = executeRegionSegmentation(
+        props.selectedImages[0]
       );
       props.setImages((previousImages) => [...previousImages, operationResult]);
     }
@@ -646,6 +673,32 @@ export const SideBar = (props: SideBarProps) => {
         placeholder="Factor"
         value={dotDetectionFactor}
         onChange={(e) => setDotDetectionFactor(e.target.value)}
+      />
+    </>
+  );
+
+  const renderLocalThresholdingInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        placeholder="Gap size"
+        value={thresholdingGapSize}
+        onChange={(e) => setThresholdingGapSize(e.target.value)}
+        inputProps={{ min: 1, max: 20 }}
+      />
+    </>
+  );
+
+  const renderPonderationFactorInput = (
+    <>
+      <TextField
+        size="small"
+        type="number"
+        placeholder="K"
+        value={ponderationFactor}
+        onChange={(e) => setPonderationFactor(e.target.value)}
+        inputProps={{ min: -1, max: 1 }}
       />
     </>
   );
@@ -1356,28 +1409,35 @@ export const SideBar = (props: SideBarProps) => {
           >
             <FormControl fullWidth>
               <Select
-                value={lineDetectionSelected}
-                onChange={(e) => setLineDetectionSelected(e.target.value)}
+                value={thresholdingSelected}
+                onChange={(e) => setThresholdingSelected(e.target.value)}
                 size="small"
               >
-                <MenuItem value={LineDetectionFilter.HORIZONTAL}>
-                  Horizontal
+                <MenuItem value={ThresholdingType.GLOBAL}>Global</MenuItem>
+                <MenuItem value={ThresholdingType.LOCAL_AVERAGE}>
+                  Local average
                 </MenuItem>
-                <MenuItem value={LineDetectionFilter.VERTICAL}>
-                  Vertical
+                <MenuItem value={ThresholdingType.LOCAL_MEDIAN}>
+                  Local median
                 </MenuItem>
-                <MenuItem value={LineDetectionFilter.DEGREES_45}>45°</MenuItem>
-                <MenuItem value={LineDetectionFilter.DEGREES_135}>
-                  135°
+                <MenuItem value={ThresholdingType.LOCAL_MIN_MAX}>
+                  Local Min&Max
                 </MenuItem>
+                <MenuItem value={ThresholdingType.NI_BLACK}>Niblack</MenuItem>
               </Select>
             </FormControl>
+            {thresholdingSelected != ThresholdingType.GLOBAL
+              ? renderLocalThresholdingInput
+              : null}
+            {thresholdingSelected == ThresholdingType.NI_BLACK
+              ? renderPonderationFactorInput
+              : null}
             <Button
               variant="contained"
               fullWidth
               sx={{ textTransform: "none" }}
               disableElevation
-              onClick={executeLineDetectionOperation}
+              onClick={executeThresholdingOperation}
             >
               Apply operation
             </Button>
@@ -1428,7 +1488,7 @@ export const SideBar = (props: SideBarProps) => {
               fullWidth
               sx={{ textTransform: "none" }}
               disableElevation
-              onClick={executeLineDetectionOperation}
+              onClick={executeRegionSegmentationOperation}
             >
               Apply operation
             </Button>

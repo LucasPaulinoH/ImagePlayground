@@ -84,7 +84,7 @@ const interval = (
   return canvas;
 };
 
-const binary = (image: HTMLCanvasElement): HTMLCanvasElement => {
+export const binary = (image: HTMLCanvasElement): HTMLCanvasElement => {
   const originalContext = image.getContext("2d");
   const imageData = originalContext.getImageData(
     0,
