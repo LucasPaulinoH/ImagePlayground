@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef } from "react";
 import { Box, Button } from "@mui/material";
 import { ImageList, ImageListItem } from "@mui/material";
@@ -94,16 +93,14 @@ export const Home = () => {
   };
 
   const renderGallery = (
-    <Box margin="50px 0px">
+    <Box>
       <ImageList>
         {images.map((canvas: HTMLCanvasElement) => (
           <ImageListItem>
             <Button
               sx={{
-                width: canvas.width + 10,
-                height: canvas.height + 10,
                 padding: 0,
-                border: `6px solid ${
+                border: `10px solid ${
                   !selectedImages.includes(canvas)
                     ? "none"
                     : selectedImages[0] === canvas &&
@@ -115,7 +112,6 @@ export const Home = () => {
                     ? "#FF595E"
                     : "none"
                 }`,
-                borderRadius: 1,
               }}
               onClick={() => handleSelectImage(canvas)}
             >

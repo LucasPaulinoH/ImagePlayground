@@ -176,7 +176,7 @@ export const SideBar = (props: SideBarProps) => {
     useState<number>(10);
   const [seeds, setSeeds] = useState<number>(1);
 
-  const [selectedUnity, setSelectedUnity] = useState<number>(1);
+  const [selectedUnity, setSelectedUnity] = useState<number>(0);
 
   useEffect(
     () =>
@@ -1507,7 +1507,7 @@ export const SideBar = (props: SideBarProps) => {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", overflow: "hidden" }}>
       <AppBar
         position="fixed"
         sx={{
