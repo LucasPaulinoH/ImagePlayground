@@ -18,6 +18,8 @@ import {
   Select,
   Button,
   TextField,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -79,8 +81,10 @@ import DataThresholdingIcon from "@mui/icons-material/DataThresholding";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import { executeThresholding } from "../../utils/SecondUnityOperations/Thresholding";
 import { executeRegionSegmentation } from "../../utils/SecondUnityOperations/RegionSegmentation";
+import MenuIcon from "@mui/icons-material/Menu";
+import "./styles.css";
 
-const drawerWidth = 240;
+const DRAWER_WIDTH = 240;
 
 interface SideBarProps {
   window?: () => Window;
@@ -711,19 +715,19 @@ export const SideBar = (props: SideBarProps) => {
   );
 
   const firstUnitySideBar = (
-    <Box height="100vh">
+    <Box className="sidebar">
       <Toolbar
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Typography variant="h5" fontWeight="bold">
-          1° Unity
+          1° UNITY
         </Typography>
       </Toolbar>
       <Divider />
       <List>
         <ListItemButton onClick={() => setArithmeticOpen(!arithmeticOpen)}>
           <ListItemIcon>
-            <CalculateIcon />
+            <CalculateIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Arithmetics" />
           {arithmeticOpen ? <ExpandLess /> : <ExpandMore />}
@@ -769,7 +773,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setLogicOpen(!logicOpen)}>
           <ListItemIcon>
-            <EmojiSymbolsIcon />
+            <EmojiSymbolsIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Logic" />
           {logicOpen ? <ExpandLess /> : <ExpandMore />}
@@ -803,7 +807,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setTransformationOpen(!transformationOpen)}
         >
           <ListItemIcon>
-            <TransformIcon />
+            <TransformIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Transformation" />
           {transformationOpen ? <ExpandLess /> : <ExpandMore />}
@@ -878,7 +882,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setZoomOpen(!zoomOpen)}>
           <ListItemIcon>
-            <ZoomInMapIcon />
+            <ZoomInMapIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Zoom" />
           {zoomOpen ? <ExpandLess /> : <ExpandMore />}
@@ -932,7 +936,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setColorChannelsOpen(!colorChannelsOpen)}
         >
           <ListItemIcon>
-            <ColorLensIcon />
+            <ColorLensIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Color Channels" />
           {colorChannelsOpen ? <ExpandLess /> : <ExpandMore />}
@@ -984,7 +988,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setPseudocoloringOpen(!pseudocoloringOpen)}
         >
           <ListItemIcon>
-            <InvertColorsIcon />
+            <InvertColorsIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Pseudocoloring" />
           {pseudocoloringOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1018,7 +1022,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setEnhancementsOpen(!enhancementsOpen)}>
           <ListItemIcon>
-            <AutoAwesomeIcon />
+            <AutoAwesomeIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Enhancements" />
           {enhancementsOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1093,7 +1097,7 @@ export const SideBar = (props: SideBarProps) => {
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Typography variant="h5" fontWeight="bold">
-          2° Unity
+          2° UNITY
         </Typography>
       </Toolbar>
 
@@ -1101,7 +1105,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setGamaAndEqOpen(!gamaAndEqOpen)}>
           <ListItemIcon>
-            <EqualizerIcon />
+            <EqualizerIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Gama & equalization" />
           {gamaAndEqOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1147,7 +1151,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setBitSlicingOpen(!bitSlicingOpen)}>
           <ListItemIcon>
-            <LayersIcon />
+            <LayersIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Bit slicing" />
           {bitSlicingOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1179,7 +1183,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setFiltersOpen(!filtersOpen)}>
           <ListItemIcon>
-            <PhotoFilterIcon />
+            <PhotoFilterIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Filters" />
           {filtersOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1238,7 +1242,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setDotDetectionOpen(!dotDetectionOpen)}>
           <ListItemIcon>
-            <WorkspacesIcon />
+            <WorkspacesIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Dot detection" />
           {dotDetectionOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1272,7 +1276,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setLineDetectionOpen(!lineDetectionOpen)}
         >
           <ListItemIcon>
-            <GridGoldenratioIcon />
+            <GridGoldenratioIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Line detection" />
           {lineDetectionOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1323,7 +1327,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setBorderDetectionOpen(!borderDetectionOpen)}
         >
           <ListItemIcon>
-            <BorderStyleIcon />
+            <BorderStyleIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Border detection" />
           {borderDetectionOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1399,7 +1403,7 @@ export const SideBar = (props: SideBarProps) => {
       <List>
         <ListItemButton onClick={() => setThresholdingOpen(!thresholdingOpen)}>
           <ListItemIcon>
-            <DataThresholdingIcon />
+            <DataThresholdingIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Thresholding" />
           {thresholdingOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1457,7 +1461,7 @@ export const SideBar = (props: SideBarProps) => {
           onClick={() => setRegionSegmentationOpen(!regionSegmentationOpen)}
         >
           <ListItemIcon>
-            <GroupWorkIcon />
+            <GroupWorkIcon className="sidebar-icon" />
           </ListItemIcon>
           <ListItemText primary="Region segmentation" />
           {regionSegmentationOpen ? <ExpandLess /> : <ExpandMore />}
@@ -1511,8 +1515,8 @@ export const SideBar = (props: SideBarProps) => {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
           backgroundColor: "#11151C",
           boxShadow: "none",
           border: "none",
@@ -1525,24 +1529,31 @@ export const SideBar = (props: SideBarProps) => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h5" noWrap component="div" fontWeight="bold">
-            Workspace
-          </Typography>
+          <IconButton
+            onClick={() => setMobileOpen(!mobileOpen)}
+            sx={{ display: { xs: "block", sm: "none" } }}
+          >
+            <MenuIcon sx={{ fill: "#fff" }} />
+          </IconButton>
           <Box>
-            <Button
-              variant="contained"
-              disableElevation
-              onClick={() => setSelectedUnity(0)}
+            <Tabs
+              centered
+              value={selectedUnity}
+              textColor="secondary"
+              indicatorColor="secondary"
+              onChange={(_, newValue) => setSelectedUnity(newValue)}
             >
-              1° unity
-            </Button>
-            <Button
-              variant="contained"
-              disableElevation
-              onClick={() => setSelectedUnity(1)}
-            >
-              2° unity
-            </Button>
+              <Tab
+                label="1° UNITY"
+                value={0}
+                sx={{ color: "#fff", fontWeight: "bold" }}
+              />
+              <Tab
+                label="2° UNITY"
+                value={1}
+                sx={{ color: "#fff", fontWeight: "bold" }}
+              />
+            </Tabs>
           </Box>
           <Box display="flex" alignItems="center">
             <Box>
@@ -1580,21 +1591,16 @@ export const SideBar = (props: SideBarProps) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
+      <Box sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}>
         <Drawer
           container={container}
-          variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           sx={{
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: drawerWidth,
+              width: DRAWER_WIDTH,
             },
           }}
         >
@@ -1606,7 +1612,7 @@ export const SideBar = (props: SideBarProps) => {
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: drawerWidth,
+              width: DRAWER_WIDTH,
             },
           }}
           open
@@ -1615,11 +1621,9 @@ export const SideBar = (props: SideBarProps) => {
         </Drawer>
       </Box>
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          mt: "40px ",
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
         }}
       >
         {props.content}

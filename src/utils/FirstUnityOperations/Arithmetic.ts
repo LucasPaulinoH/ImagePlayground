@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ArithmeticOperation } from "../../types";
 import { extractCanvasImageMatrix } from "../usualFunctions";
 

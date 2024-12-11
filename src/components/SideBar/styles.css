@@ -1,0 +1,9 @@
+.sidebar {
+  height: 100vh;
+  background-color: #146c94;
+  border: none;
+}
+
+.sidebar-icon {
+  fill: #f6f1f1;
+}

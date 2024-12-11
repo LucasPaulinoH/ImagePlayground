@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ColorChannel, RgbConversion } from "../../types";
 import { extractCanvasImageMatrix as extractMatrixFromCanvasImage } from "../usualFunctions";
 

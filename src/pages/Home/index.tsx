@@ -8,8 +8,6 @@ export const Home = () => {
   const [images, setImages] = useState<HTMLCanvasElement[]>([]);
   const [selectedImages, setSelectedImages] = useState<HTMLCanvasElement[]>([]);
 
-  //ajsbj
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (
@@ -123,6 +121,9 @@ export const Home = () => {
                 alt={`Image`}
                 style={{
                   borderRadius: 1,
+                  width: "400px",
+                  height: "300px",
+                  objectFit: "cover",
                 }}
               />
             </Button>

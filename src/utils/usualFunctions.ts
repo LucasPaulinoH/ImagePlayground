@@ -1,4 +1,3 @@
-// @ts-nocheck
 const GUIDE_HEIGHT = 8;
 
 export const extractCanvasImageMatrix = (
