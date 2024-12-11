@@ -97,7 +97,7 @@ export const Home = () => {
       sx={{
         display: "grid",
         width: "100%",
-        gridTemplateColumns: "380px 380px 380px",
+        gridTemplateColumns: "240px 240px ",
         rowGap: 2,
         columnGap: 2,
       }}
@@ -127,7 +127,7 @@ export const Home = () => {
               src={canvas.toDataURL()}
               loading="lazy"
               alt={`Image ${index + 1}`}
-              style={{ height: "auto", maxWidth: "380px" }}
+              style={{ height: "auto", maxWidth: "240px" }}
             />
           </Button>
         </ImageListItem>

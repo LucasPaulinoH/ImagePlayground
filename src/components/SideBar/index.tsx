@@ -1670,7 +1670,9 @@ const captionStyles = {
     right: 10,
     display: "flex",
     gap: 15,
-    fontSize: "12pt"
+    fontSize: "12pt",
+    backgroundColor: "var(--workspace-background)",
+    padding: "5px 10px"
   } as CSSProperties,
 
   singleCaptionContainer: {
