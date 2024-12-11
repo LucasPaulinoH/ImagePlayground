@@ -8,6 +8,8 @@ export const Home = () => {
   const [images, setImages] = useState<HTMLCanvasElement[]>([]);
   const [selectedImages, setSelectedImages] = useState<HTMLCanvasElement[]>([]);
 
+  //ajsbj
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (
