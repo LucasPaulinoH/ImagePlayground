@@ -21,7 +21,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import EmojiSymbolsIcon from "@mui/icons-material/EmojiSymbols";
 import { arithmeticOperation } from "../../utils/FirstUnityOperations/Arithmetic";
@@ -544,7 +544,7 @@ export const SideBar = (props: SideBarProps) => {
         <Button
           variant="contained"
           fullWidth
-          color="secondary"
+          color="success"
           sx={{ textTransform: "none", fontSize: "8pt" }}
           onClick={handleAddEnhancementInterval}
           disableElevation
@@ -720,7 +720,7 @@ export const SideBar = (props: SideBarProps) => {
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Typography variant="h5" fontWeight="bold">
-          1° UNITY
+          1° SEGMENT
         </Typography>
       </Toolbar>
       <Divider />
@@ -1092,12 +1092,12 @@ export const SideBar = (props: SideBarProps) => {
   );
 
   const secondUnitySideBar = (
-    <Box height="100vh">
+    <Box className="sidebar">
       <Toolbar
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Typography variant="h5" fontWeight="bold">
-          2° UNITY
+          2° SEGMENT
         </Typography>
       </Toolbar>
 
@@ -1511,13 +1511,13 @@ export const SideBar = (props: SideBarProps) => {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex", overflow: "hidden" }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { sm: `${DRAWER_WIDTH}px` },
-          backgroundColor: "#11151C",
+          backgroundColor: "var(--workspace-background)",
           boxShadow: "none",
           border: "none",
         }}
@@ -1533,7 +1533,7 @@ export const SideBar = (props: SideBarProps) => {
             onClick={() => setMobileOpen(!mobileOpen)}
             sx={{ display: { xs: "block", sm: "none" } }}
           >
-            <MenuIcon sx={{ fill: "#fff" }} />
+            <MenuIcon sx={{ fill: "var(--white)" }} />
           </IconButton>
           <Box>
             <Tabs
@@ -1544,21 +1544,21 @@ export const SideBar = (props: SideBarProps) => {
               onChange={(_, newValue) => setSelectedUnity(newValue)}
             >
               <Tab
-                label="1° UNITY"
+                label="1° SEGMENT"
                 value={0}
-                sx={{ color: "#fff", fontWeight: "bold" }}
+                sx={{ color: "var(--white)", fontWeight: "bold" }}
               />
               <Tab
-                label="2° UNITY"
+                label="2° SEGMENT"
                 value={1}
-                sx={{ color: "#fff", fontWeight: "bold" }}
+                sx={{ color: "var(--white)", fontWeight: "bold" }}
               />
             </Tabs>
           </Box>
           <Box display="flex" alignItems="center">
             <Box>
               <Tooltip title="Add image to workspace">
-                <IconButton sx={{ color: "#ffffff" }}>
+                <IconButton sx={{ color: "var(--white)" }}>
                   <input
                     type="file"
                     accept=".jpeg, .jpg, .bmp, .png, .gif, .tiff, .pgm"
@@ -1581,7 +1581,7 @@ export const SideBar = (props: SideBarProps) => {
               </Tooltip>
               <Tooltip title="Clear workspace">
                 <IconButton
-                  sx={{ color: "#ffffff" }}
+                  sx={{ color: "var(--white)" }}
                   onClick={props.handleClearPlaygroundClick}
                 >
                   <DeleteForeverIcon />
@@ -1628,6 +1628,60 @@ export const SideBar = (props: SideBarProps) => {
       >
         {props.content}
       </Box>
+      <div style={captionStyles.generalContainer}>
+        <div style={captionStyles.singleCaptionContainer}>
+          <div
+            style={{
+              ...captionStyles.captionSquare,
+              backgroundColor: "var(--success)",
+            }}
+          />
+          <span>Primary</span>
+        </div>
+        <div style={captionStyles.singleCaptionContainer}>
+          <div
+            style={{
+              ...captionStyles.captionSquare,
+              backgroundColor: "var(--error)",
+            }}
+          />
+          <span>Secondary</span>
+        </div>
+        <div style={captionStyles.singleCaptionContainer}>
+          <div
+            style={{
+              ...captionStyles.captionSquare,
+              backgroundColor: "var(--double-selected)",
+            }}
+          />
+          <span>Double-selected</span>
+        </div>
+      </div>
     </Box>
   );
+};
+
+const captionStyles = {
+  generalContainer: {
+    color: "var(--white)",
+    zIndex: 10,
+    position: "fixed",
+    bottom: 10,
+    right: 10,
+    display: "flex",
+    gap: 15,
+    fontSize: "12pt"
+  } as CSSProperties,
+
+  singleCaptionContainer: {
+    display: "flex",
+    gap: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  } as CSSProperties,
+
+  captionSquare: {
+    width: "15px",
+    height: "15px",
+  } as CSSProperties,
 };

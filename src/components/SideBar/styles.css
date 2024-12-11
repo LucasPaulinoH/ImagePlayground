@@ -1,9 +1,9 @@
 .sidebar {
-  height: 100vh;
-  background-color: #146c94;
   border: none;
+  background-color: var(--white);
+  color: var(--workspace-background);
 }
 
 .sidebar-icon {
-  fill: #f6f1f1;
+  color: var(--workspace-background);
 }

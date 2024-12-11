@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, CSSProperties } from "react";
 import { Box, Button } from "@mui/material";
 import { ImageList, ImageListItem } from "@mui/material";
 import { SideBar } from "../../components/SideBar";
@@ -93,43 +93,45 @@ export const Home = () => {
   };
 
   const renderGallery = (
-    <Box>
-      <ImageList>
-        {images.map((canvas: HTMLCanvasElement) => (
-          <ImageListItem>
-            <Button
-              sx={{
-                padding: 0,
-                border: `10px solid ${
-                  !selectedImages.includes(canvas)
-                    ? "none"
-                    : selectedImages[0] === canvas &&
-                      selectedImages[1] === canvas
-                    ? "#EFABFF"
-                    : selectedImages[0] === canvas
-                    ? "#1982C4"
-                    : selectedImages[1] === canvas
-                    ? "#FF595E"
-                    : "none"
-                }`,
-              }}
-              onClick={() => handleSelectImage(canvas)}
-            >
-              <img
-                src={canvas.toDataURL()}
-                loading="lazy"
-                alt={`Image`}
-                style={{
-                  borderRadius: 1,
-                  width: "400px",
-                  height: "300px",
-                  objectFit: "cover",
-                }}
-              />
-            </Button>
-          </ImageListItem>
-        ))}
-      </ImageList>
+    <Box
+      sx={{
+        display: "grid",
+        width: "100%",
+        gridTemplateColumns: "380px 380px 380px",
+        rowGap: 2,
+        columnGap: 2,
+      }}
+    >
+      {images.map((canvas: HTMLCanvasElement, index: number) => (
+        <ImageListItem key={index}>
+          <Button
+            sx={{
+              padding: 0,
+              border: `5px solid ${
+                !selectedImages.includes(canvas)
+                  ? "transparent"
+                  : selectedImages[0] === canvas && selectedImages[1] === canvas
+                  ? "var(--double-selected)"
+                  : selectedImages[0] === canvas
+                  ? "var(--success)"
+                  : selectedImages[1] === canvas
+                  ? "var(--error)"
+                  : "transparent"
+              }`,
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+            onClick={() => handleSelectImage(canvas)}
+          >
+            <img
+              src={canvas.toDataURL()}
+              loading="lazy"
+              alt={`Image ${index + 1}`}
+              style={{ height: "auto", maxWidth: "380px" }}
+            />
+          </Button>
+        </ImageListItem>
+      ))}
     </Box>
   );
 
@@ -137,7 +139,7 @@ export const Home = () => {
 
   return (
     <>
-      <Box margin="30px">
+      <Box margin="40px 20px">
         <SideBar
           images={images}
           setImages={setImages}
@@ -148,6 +150,7 @@ export const Home = () => {
           handleClearPlaygroundClick={handleClearPlaygroundClick}
           inputRef={inputRef}
         />
+        
       </Box>
     </>
   );

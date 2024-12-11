@@ -1,13 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 :root {
-  font-family: "Roboto", sans-serif;
+  --primary: #ffd369;
+  --secondary: #393e46;
+  --white: #eeeeee;
+  --workspace-background: #222831;
+  --success: #2c74b3;
+  --error: #ff595e;
+  --double-selected: #EFABFF;
+
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
-  color: #f4f3ee;
-  background-color: #11151c;
+  color: var(--white);
+  background-color: var(--workspace-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -46,14 +54,14 @@ button {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--white);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1982C4;
+  background: var(--primary);
   border-radius: 15px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #11151C;
+  background: #e79e4f;
 }
