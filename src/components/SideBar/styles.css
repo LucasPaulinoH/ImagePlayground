@@ -1,9 +1,13 @@
 .sidebar {
   border: none;
-  background-color: var(--white);
+ 
   color: var(--workspace-background);
 }
 
 .sidebar-icon {
   color: var(--workspace-background);
+}
+
+.css-12i7wg6-MuiPaper-root-MuiDrawer-paper {
+  background-color: var(--workspace-background);
 }

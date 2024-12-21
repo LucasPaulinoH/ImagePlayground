@@ -12,7 +12,12 @@ export const theme = createTheme({
       main: "#FF595E",
     },
     success: {
-      main: "#2C74B3"
-    }
+      main: "#2C74B3",
+    },
   },
+  typography: {
+    fontFamily: `"Poppins", seriff`,
+  }
+
+  
 });

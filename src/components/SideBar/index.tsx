@@ -1092,7 +1092,7 @@ export const SideBar = (props: SideBarProps) => {
   );
 
   const secondUnitySideBar = (
-    <Box className="sidebar">
+    <Box className="sidebar" marginBottom={0}>
       <Toolbar
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
@@ -1546,12 +1546,12 @@ export const SideBar = (props: SideBarProps) => {
               <Tab
                 label="1° SEGMENT"
                 value={0}
-                sx={{ color: "var(--white)", fontWeight: "bold" }}
+                sx={{ color: "var(--white)" }}
               />
               <Tab
                 label="2° SEGMENT"
                 value={1}
-                sx={{ color: "var(--white)", fontWeight: "bold" }}
+                sx={{ color: "var(--white)" }}
               />
             </Tabs>
           </Box>
@@ -1614,6 +1614,7 @@ export const SideBar = (props: SideBarProps) => {
               boxSizing: "border-box",
               width: DRAWER_WIDTH,
             },
+            backgroundColor: "black",
           }}
           open
         >
@@ -1672,7 +1673,7 @@ const captionStyles = {
     gap: 15,
     fontSize: "12pt",
     backgroundColor: "var(--workspace-background)",
-    padding: "5px 10px"
+    padding: "5px 10px",
   } as CSSProperties,
 
   singleCaptionContainer: {
